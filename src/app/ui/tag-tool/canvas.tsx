@@ -1,7 +1,7 @@
 'use client'
 
 import Konva from 'konva';
-import { use, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Stage, Layer, Rect } from 'react-konva'
 import Tag from './tag';
 import { KonvaEventObject } from 'konva/lib/Node';
@@ -43,6 +43,17 @@ export default function Canvas() {
   const stageRef = useRef<Konva.Stage>(null);
   const constructorRef = useRef<Konva.Rect>(null);
 
+  useEffect(() => {
+    function onDeleteKey(e) {
+      if (e.key === "Delete" || e.key === "Backspace") {
+        handleDelete()
+      }
+    } 
+    window.addEventListener('keydown', onDeleteKey)
+
+    return () => {
+      window.removeEventListener('keydown',onDeleteKey)    }
+  })
 
   function handleMouseDown(e: KonvaEventObject<MouseEvent, Konva.Node>) {
     const clickedOnTag = e.target.name() === 'tag'
@@ -187,7 +198,9 @@ export default function Canvas() {
       </div>
       
       <div style={{ maxWidth: '300px' }} className='col-3'>
-        <button className='btn-primary btn' onClick={handleDelete}>
+        <button
+          className='btn-primary btn'
+          onClick={handleDelete}>
           delete
         </button>
       </div>
