@@ -6,6 +6,7 @@ import { Stage, Layer, Rect } from 'react-konva'
 import Tag from './tag';
 import { KonvaEventObject } from 'konva/lib/Node';
 import BaseImage from './base-image';
+import { normalizeTag } from '@/app/lib/tag';
 
 
 export interface Rectangle  {
@@ -81,7 +82,9 @@ export default function Canvas() {
 
     //create new tag and add to array with size minimum
     const constructor = constructorRef.current;
-    if (constructor && constructor.width() > 20 && constructor.height() > 20) {
+    if (constructor
+      && (constructor.width() > 20 || constructor.width() < -20)
+      && (constructor.height() > 20 || constructor.height() < -20)) {
       const tag = {
         x: constructor.x(),
         y: constructor.y(),
@@ -91,11 +94,12 @@ export default function Canvas() {
         strokeWidth: 3/scale,
         id: crypto.randomUUID(),
       };
+      //handle negative values
+      const normalizedTag = normalizeTag(tag)
       const tagArr = rectList
-      tagArr.push(tag)
+      tagArr.push(normalizedTag)
       setRectList(tagArr);
     }
-    
 
     //reset constructor
     constructor?.setAttrs({
