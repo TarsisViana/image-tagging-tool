@@ -33,11 +33,13 @@ export default function Canvas() {
   const [rectList, setRectList] = useState<Rectangle[]>([initialRect]);
   const [selectedId, selectShape] = useState<string | null>(null);
   const [isDrawing, setDrawing] = useState(false);
-  const [imageAtr, setImageAtr] = useState(null);
 
+  //put in context later
+  const [imageAtr, setImageAtr] = useState({width:1, height:1, imgRatio:1});
   //stage size
-  const [height, setHeight] = useState(500) 
+  const [stageSize, setStageSize] = useState({ width: 1, height: 1 })
   const [scale, setScale] = useState(1)
+  const [containerSize, setContainerSize] = useState({width:1,height:1})
 
 
   const stageRef = useRef<Konva.Stage>(null);
@@ -54,6 +56,23 @@ export default function Canvas() {
     return () => {
       window.removeEventListener('keydown',onDeleteKey)    }
   })
+
+  //check the parent size
+  useEffect(() => {
+    function checkSize() {
+      const container = stageRef.current?.container();
+      if (container) {
+        setContainerSize({
+          width: container?.offsetWidth,
+          height: container?.offsetHeight
+        })
+      }
+      
+    }
+    checkSize();
+    window.addEventListener('resize', checkSize);
+    return () => window.removeEventListener('resize', checkSize);
+  },[])
 
   function handleMouseDown(e: KonvaEventObject<MouseEvent, Konva.Node>) {
     const clickedOnTag = e.target.name() === 'tag'
@@ -149,25 +168,28 @@ export default function Canvas() {
     }
   }
   return (
-    <div className='row justify-content-center'>
-      <div className='col-9 justify-content-center d-flex'>
+    <>
+      <div
+        className='flex-grow-1 flex-shrink-1 d-flex justify-content-center align-items-center'
+        id='canvasContainer'>
         <Stage
-          width={800}
-          height={height}
+          width={stageSize.width}
+          height={stageSize.height}
           scaleX={scale}
           scaleY={scale}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           name="canvas"
-          ref={stageRef}
-          className='border border-secondary-subtle'
+          ref={stageRef} 
+          container='canvasContainer'
         >
           <BaseImage
             selectShape={selectShape}
             setImageAtr={setImageAtr}
             setScale={setScale}
-            setHeight={setHeight}
+            setSize={setStageSize}
+            containerSize={containerSize}
           />
           <Layer>
             {rectList.map((rect, index) => {
@@ -204,6 +226,6 @@ export default function Canvas() {
           delete
         </button>
       </div>
-    </div>
+    </>
     )
 }
