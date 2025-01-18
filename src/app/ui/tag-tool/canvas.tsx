@@ -1,52 +1,36 @@
 'use client'
 
 import Konva from 'konva';
-import { useEffect, useRef, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { Stage, Layer, Rect } from 'react-konva'
 import Tag from './tag';
 import { KonvaEventObject } from 'konva/lib/Node';
 import BaseImage from './base-image';
 import { normalizeTag } from '@/app/lib/tag';
+import { Rectangle } from './tag-tool';
 
 
-export interface Rectangle  {
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  stroke: string,
-  strokeWidth: number,
-  id: string
-}
 
-const initialRect : Rectangle = {
-  x: 20,
-  y: 20,
-  width: 100,
-  height: 100,
-  stroke: 'red',
-  strokeWidth: 3,
-  id: 'rect1',
-};
 
-export default function Canvas() {
-  const [rectList, setRectList] = useState<Rectangle[]>([initialRect]);
-  const [selectedId, selectShape] = useState<string | null>(null);
+export default function Canvas({ rectList, setRectList, selectedId, selectTag, handleDelete }: {
+  rectList: Rectangle[],
+  setRectList: Dispatch<SetStateAction<Rectangle[]>>,
+  selectedId: string | null ,
+  selectTag: Dispatch<SetStateAction<string | null>>,
+  handleDelete: ()=> void,
+}) {
   const [isDrawing, setDrawing] = useState(false);
-
-  //put in context later
-  const [imageAtr, setImageAtr] = useState({width:1, height:1, imgRatio:1});
+  
   //stage size
   const [stageSize, setStageSize] = useState({ width: 1, height: 1 })
   const [scale, setScale] = useState(1)
   const [containerSize, setContainerSize] = useState({width:1,height:1})
 
-
   const stageRef = useRef<Konva.Stage>(null);
   const constructorRef = useRef<Konva.Rect>(null);
 
   useEffect(() => {
-    function onDeleteKey(e) {
+    function onDeleteKey(e: KeyboardEvent) {
       if (e.key === "Delete" || e.key === "Backspace") {
         handleDelete()
       }
@@ -63,8 +47,8 @@ export default function Canvas() {
       const container = stageRef.current?.container();
       if (container) {
         setContainerSize({
-          width: container?.offsetWidth,
-          height: container?.offsetHeight
+          width: container.offsetWidth,
+          height: container.offsetHeight
         })
       }
       
@@ -140,19 +124,6 @@ export default function Canvas() {
     })
   }
 
-  function handleDelete() {
-    const id = selectedId
-    if (!selectedId) return
-
-    const item = rectList.find((tag) => tag.id === id)
-    if (item) {
-      const index = rectList.indexOf(item)
-      const newArr = rectList.toSpliced(index, 1)
-
-      setRectList(newArr)
-      selectShape(null)
-    }
-  }
 
   function getPointer(node: Konva.Node | null) {
     if (!node) {
@@ -185,8 +156,7 @@ export default function Canvas() {
           container='canvasContainer'
         >
           <BaseImage
-            selectShape={selectShape}
-            setImageAtr={setImageAtr}
+            selectTag={selectTag}
             setScale={setScale}
             setSize={setStageSize}
             containerSize={containerSize}
@@ -199,7 +169,7 @@ export default function Canvas() {
                   tagProps={rect}
                   isSelected={rect.id === selectedId}
                   onSelect={() => {
-                    selectShape(rect.id);
+                    selectTag(rect.id);
                   }}
                   onChange={(newAttrs: Rectangle) => {
                     const rects = rectList.slice();
@@ -217,14 +187,6 @@ export default function Canvas() {
             />
           </Layer>
         </Stage>
-      </div>
-      
-      <div style={{ maxWidth: '300px' }} className='col-3'>
-        <button
-          className='btn-primary btn'
-          onClick={handleDelete}>
-          delete
-        </button>
       </div>
     </>
     )

@@ -3,27 +3,21 @@ import { Image, Layer } from "react-konva";
 import useImage from "use-image";
 
 
-export default function BaseImage({ selectShape, setImageAtr, setScale, setSize, containerSize }:
+export default function BaseImage({ selectTag, setScale, setSize, containerSize }:
   {
-    selectShape: (arg: null) => void,
-    setImageAtr: (arg: object) => void,
+    selectTag: (arg: null) => void,
     setScale: (arg: number) => void,
     setSize: (arg: { width: number, height: number }) => void,
     containerSize: { width:number, height:number }
   }) {
-  const [image] = useImage('/vertcat.jpg');
+  const [image] = useImage('/pic.png');
 
   useEffect(() => {
     if (!image) return
     const imgRatio = image.width / image.height
-    
-    setImageAtr({
-      width: image.width,
-      height: image.height,
-      imgRatio: imgRatio,
-    })
 
     const containerRatio = containerSize.width / containerSize.height;
+    //compare the ratios to find the breakpoint
     if (imgRatio <= containerRatio) {
       setSize({
         width: containerSize.height * imgRatio,
@@ -38,14 +32,14 @@ export default function BaseImage({ selectShape, setImageAtr, setScale, setSize,
     
     const scale = Math.min(containerSize.width / image.width, containerSize.height / image.height);
     setScale(scale)
-  },[containerSize.height, containerSize.width, image, setImageAtr, setScale, setSize])
+  },[containerSize.height, containerSize.width, image, setScale, setSize])
 
   return (
     <Layer>
       <Image
         image={image}
         onMouseDown={() => {
-          selectShape(null)
+          selectTag(null)
         }}
         name='image'
         alt='placeholder'
