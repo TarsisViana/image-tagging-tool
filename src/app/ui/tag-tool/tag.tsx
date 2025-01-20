@@ -1,7 +1,7 @@
 import {useEffect, useRef} from 'react';
-import { Rectangle } from './canvas';
 import Konva from 'konva';
 import { Rect, Transformer } from 'react-konva';
+import { Rectangle } from './tag-tool';
 
 interface TagProps {
   tagProps: Rectangle,
@@ -50,7 +50,6 @@ export default function Tag ({ tagProps, isSelected, onSelect, onChange }: TagPr
   return (
     <>
       <Rect
-        name='tag'
         onMouseDown={onSelect}
         ref={shapeRef}
         fill='transparent'

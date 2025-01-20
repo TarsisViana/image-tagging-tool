@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from "react";
 import Canvas from "./canvas"
+import TagNameList from "./name-list";
+import { TagToolProvider, useTagContext } from "@/context/TagToolContext";
+
 
 
 export interface Rectangle {
@@ -12,55 +14,33 @@ export interface Rectangle {
   stroke: string,
   strokeWidth: number,
   id: string
+  name: string
 }
 
-//put in context
-const initialRect: Rectangle[]= [{
-  x: 20,
-  y: 20,
-  width: 100,
-  height: 100,
-  stroke: 'red',
-  strokeWidth: 3,
-  id: 'rect1',
-}];
 
+//put in context rect[], tagnamelist, selectedId, deleteTag
 
 export default function TagTool() {
-  const [rectList, setRectList] = useState<Rectangle[]>(initialRect);
-  const [selectedId, selectTag] = useState<string | null>(null);
+  const { selectedId, deleteTag } = useTagContext()
 
-  function handleDelete() {
-    const id = selectedId
-    if (!selectedId) return
-
-    const item = rectList.find((tag) => tag.id === id)
-    if (item) {
-      const index = rectList.indexOf(item)
-      const newArr = rectList.toSpliced(index, 1)
-
-      setRectList(newArr)
-      selectTag(null)
-    }
-  }
+  
+  
   return ( 
     <div className="container-fluid d-flex p-0 ">
-      <Canvas
-        rectList={rectList}
-        setRectList={setRectList}
-        selectedId={selectedId}
-        selectTag={selectTag}
-        handleDelete={handleDelete}
-      />
-      <div style={{ maxWidth: '300px' }} className='col-3'>
-        <button
-          className='btn-primary btn'
-          onClick={handleDelete}
+      <TagToolProvider>
+        <Canvas/>
+        <div style={{ maxWidth: '300px' }} className='col-3'>
+          <p>{selectedId}</p>
+          <TagNameList />
+          <button
+            className='btn-primary btn'
+            onClick={deleteTag}
           >
-          delete
-        </button>
-        <p>{selectedId}</p>
-      </div>
+            Delete Tag
+          </button>
+        </div>
+      </TagToolProvider>
+      
     </div>
   )
 }

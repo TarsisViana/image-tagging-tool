@@ -1,25 +1,22 @@
 'use client'
 
 import Konva from 'konva';
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Stage, Layer, Rect } from 'react-konva'
 import Tag from './tag';
 import { KonvaEventObject } from 'konva/lib/Node';
 import BaseImage from './base-image';
 import { normalizeTag } from '@/app/lib/tag';
 import { Rectangle } from './tag-tool';
+import { useTagContext } from '@/context/TagToolContext';
 
 
 
 
-export default function Canvas({ rectList, setRectList, selectedId, selectTag, handleDelete }: {
-  rectList: Rectangle[],
-  setRectList: Dispatch<SetStateAction<Rectangle[]>>,
-  selectedId: string | null ,
-  selectTag: Dispatch<SetStateAction<string | null>>,
-  handleDelete: ()=> void,
-}) {
+export default function Canvas() {
+  const { tagList, addTag, selectedId, selectTag, deleteTag, editTag } = useTagContext()
   const [isDrawing, setDrawing] = useState(false);
+  
   
   //stage size
   const [stageSize, setStageSize] = useState({ width: 1, height: 1 })
@@ -32,7 +29,7 @@ export default function Canvas({ rectList, setRectList, selectedId, selectTag, h
   useEffect(() => {
     function onDeleteKey(e: KeyboardEvent) {
       if (e.key === "Delete" || e.key === "Backspace") {
-        handleDelete()
+        deleteTag()
       }
     } 
     window.addEventListener('keydown', onDeleteKey)
@@ -107,12 +104,12 @@ export default function Canvas({ rectList, setRectList, selectedId, selectTag, h
         stroke: 'yellow',
         strokeWidth: 3/scale,
         id: crypto.randomUUID(),
+        name:''
       };
       //handle negative values
       const normalizedTag = normalizeTag(tag)
-      const tagArr = rectList
-      tagArr.push(normalizedTag)
-      setRectList(tagArr);
+      addTag(normalizedTag)
+      selectTag(tag.id)
     }
 
     //reset constructor
@@ -162,7 +159,7 @@ export default function Canvas({ rectList, setRectList, selectedId, selectTag, h
             containerSize={containerSize}
           />
           <Layer>
-            {rectList.map((rect, index) => {
+            {tagList && tagList.map((rect, index) => {
               return (
                 <Tag
                   key={index}
@@ -172,9 +169,7 @@ export default function Canvas({ rectList, setRectList, selectedId, selectTag, h
                     selectTag(rect.id);
                   }}
                   onChange={(newAttrs: Rectangle) => {
-                    const rects = rectList.slice();
-                    rects[index] = newAttrs;
-                    setRectList(rects);
+                    editTag(newAttrs,index)
                   }}
                 />
               )

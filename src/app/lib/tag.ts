@@ -1,4 +1,4 @@
-import { Rectangle } from "../ui/tag-tool/canvas"
+import { Rectangle } from "../ui/tag-tool/tag-tool"
 
 export function normalizeTag(tag:Rectangle) {
   if (tag.width > 0 && tag.height > 0) return tag
