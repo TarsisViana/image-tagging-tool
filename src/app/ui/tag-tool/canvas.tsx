@@ -7,8 +7,7 @@ import Tag from './tag';
 import { KonvaEventObject } from 'konva/lib/Node';
 import BaseImage from './base-image';
 import { normalizeTag } from '@/app/lib/tag';
-import { Rectangle } from './tag-tool';
-import { useTagContext } from '@/context/TagToolContext';
+import { Rectangle, useTagContext } from '@/context/TagToolContext';
 
 
 
@@ -29,7 +28,7 @@ export default function Canvas() {
   useEffect(() => {
     function onDeleteKey(e: KeyboardEvent) {
       if (e.key === "Delete" || e.key === "Backspace") {
-        deleteTag()
+        deleteTag();
       }
     } 
     window.addEventListener('keydown', onDeleteKey)

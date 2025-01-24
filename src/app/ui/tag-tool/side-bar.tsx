@@ -2,19 +2,35 @@
 
 import { createTagName } from "@/app/lib/actions";
 import { useTagContext } from "@/context/TagToolContext";
-import { useEffect, useRef, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 import { Modal } from "react-bootstrap"
 import Button from 'react-bootstrap/Button'
 
+export default function SideBar() {
+  const { selectedId, deleteTag } = useTagContext()
+  return (
+    <>
+      <p>{selectedId}</p>
+      <TagNameList />
+      <Button
+        variant="danger"
+        onClick={deleteTag}
+      >
+        Delete Tag
+      </Button>
+    </>
+  )
+}
 
-export default function TagNameList() {
-  const {tagNameList, selectedId, tagList, editTagName} = useTagContext()
+function TagNameList() {
+  const { tagNameList, selectedId, tagList, editTagName } = useTagContext();
+  
   const [modalShow, setModalShow] = useState(false);
-  const [currentName, setCurrentName] = useState()
+  const [currentName, setCurrentName] = useState<string | null>(null);
   
 
   useEffect(() => {
-    const tagName = tagList.find((tag) => tag.id == selectedId)?.name
+    const tagName = tagList.find((tag) => tag.id == selectedId)?.tagName
     if (tagName) {
       setCurrentName(tagName)
     } else {
@@ -24,12 +40,15 @@ export default function TagNameList() {
   
   },[selectedId,tagList])
 
-  const handleShow = () => setModalShow(true)
-  function handleClick(e) {
-    console.log(e.target.id)
+  function handleShow() {
+    setModalShow(true)
+  }
+
+  function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
     if (selectedId) {
-      editTagName(e.target.id)
-      setCurrentName(e.target.id)
+      const button = e.target as HTMLButtonElement
+      editTagName(button.id)
+      setCurrentName(button.id)
     }
     
   }
@@ -45,10 +64,11 @@ export default function TagNameList() {
         {tagNameList.map((name, index) => {
           return ( 
             <Button
-              key={name}
-              variant={currentName === name ? 'secondary' : 'outline-secondary'}
+              key={index}
+              variant={'outline-secondary'}
               onClick={handleClick}
               id={name}
+              active={currentName === name}
             >
               {name}
             </Button>
@@ -56,20 +76,23 @@ export default function TagNameList() {
         })}
         
       </div>
-      <Dialog show={modalShow} setShow={setModalShow} tagList ={tagNameList}/>
+      <Dialog show={modalShow} setShow={setModalShow}/>
     </>
   )
 }
 
-function Dialog({show,setShow,tagList}) {
+function Dialog({ show, setShow }: {
+  show: boolean,
+  setShow: Dispatch<SetStateAction<boolean>>,
+}) {
   const { addTagName } = useTagContext()
-  const inputRef = useRef(null)
-  const formRef = useRef(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
   
   const handleClose = () => setShow(false);
   
   function handleSave() {
-    const input : HTMLInputElement | null = inputRef.current
+    const input  = inputRef?.current
     if (input) {
       addTagName(input.value)
     }

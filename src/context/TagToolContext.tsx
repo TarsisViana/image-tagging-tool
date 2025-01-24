@@ -1,5 +1,15 @@
-import { Rectangle } from "@/app/ui/tag-tool/tag-tool"
 import { createContext, Dispatch, SetStateAction, useContext, useState } from "react"
+
+export interface Rectangle {
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  stroke: string,
+  strokeWidth: number,
+  id: string
+  tagName: string | null
+}
 
 type TagToolContextProps = {
   tagList: Rectangle[],
@@ -33,7 +43,7 @@ const initialRect: Rectangle[] = [{
   stroke: 'red',
   strokeWidth: 3,
   id: 'rect1',
-  name: 'big dogs',
+  tagName: 'big dogs',
 }];
 
 export function TagToolProvider({ children }: { children: React.ReactNode }) {
@@ -48,18 +58,18 @@ export function TagToolProvider({ children }: { children: React.ReactNode }) {
   }
 
   function deleteTag() {
-    const id = selectedId
     if (!selectedId) return
 
-    const item = tagList.find((tag) => tag.id === id)
-    if (item) {
-      const index = tagList.indexOf(item)
+    const tag = tagList.find((tag) => tag.id === selectedId)
+    if (tag) {
+      const index = tagList.indexOf(tag)
       const newArr = tagList.toSpliced(index, 1)
 
       setTagList(newArr)
       selectTag(null)
     }
   }
+
   function editTag(tag:Rectangle, index:number) {
     const newArr = tagList.slice();
     newArr[index] = tag;
@@ -79,7 +89,7 @@ export function TagToolProvider({ children }: { children: React.ReactNode }) {
     const index = tagList.findIndex((tag) => tag.id === id)
     if (index >= 0) {
       const newArr = tagList.slice()
-      newArr[index] = { ...newArr[index],name: name};
+      newArr[index] = { ...newArr[index],tagName: name};
 
       setTagList(newArr)
       return
