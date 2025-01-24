@@ -1,7 +1,7 @@
 'use client'
 
 import Canvas from "./canvas"
-import TagNameList from "./name-list";
+import TagNameList from "./side-bar";
 import { TagToolProvider, useTagContext } from "@/context/TagToolContext";
 
 
@@ -14,7 +14,7 @@ export interface Rectangle {
   stroke: string,
   strokeWidth: number,
   id: string
-  name: string
+  name: string | null
 }
 
 

@@ -10,7 +10,7 @@ type TagToolContextProps = {
   editTag: (tag:Rectangle, index:number) => void,
   addTagName: (name: string) => void,
   selectTag: Dispatch<SetStateAction<string | null>>,
-
+  editTagName: (name:string) => void
 }
 
 const TagToolContext = createContext<TagToolContextProps>({
@@ -22,6 +22,7 @@ const TagToolContext = createContext<TagToolContextProps>({
   deleteTag: () => {},
   editTag: () => {},
   addTagName: () => {},
+  editTagName: () => {},
 })
 
 const initialRect: Rectangle[] = [{
@@ -32,7 +33,7 @@ const initialRect: Rectangle[] = [{
   stroke: 'red',
   strokeWidth: 3,
   id: 'rect1',
-  name: ''
+  name: 'big dogs',
 }];
 
 export function TagToolProvider({ children }: { children: React.ReactNode }) {
@@ -41,9 +42,9 @@ export function TagToolProvider({ children }: { children: React.ReactNode }) {
   const [selectedId, selectTag] = useState<string | null>(null);
 
   function addTag(tag:Rectangle) {
-    const tagArr = tagList
-    tagArr.push(tag)
-    setTagList(tagArr);
+    const newArr = tagList.slice()
+    newArr.push(tag)
+    setTagList(newArr);
   }
 
   function deleteTag() {
@@ -60,15 +61,29 @@ export function TagToolProvider({ children }: { children: React.ReactNode }) {
     }
   }
   function editTag(tag:Rectangle, index:number) {
-    const tagArr = tagList.slice();
-    tagArr[index] = tag;
-    setTagList(tagArr);
+    const newArr = tagList.slice();
+    newArr[index] = tag;
+    setTagList(newArr);
   }
 
   function addTagName(name:string) {
     const nameArr = tagNameList;
     nameArr.push(name);
     setTagNameList(nameArr);
+  }
+
+  function editTagName(name: string) {
+    const id = selectedId
+    if (!selectedId) return
+
+    const index = tagList.findIndex((tag) => tag.id === id)
+    if (index >= 0) {
+      const newArr = tagList.slice()
+      newArr[index] = { ...newArr[index],name: name};
+
+      setTagList(newArr)
+      return
+    }
   }
   return (
     <TagToolContext.Provider
@@ -81,6 +96,7 @@ export function TagToolProvider({ children }: { children: React.ReactNode }) {
         selectedId,
         selectTag,
         editTag,
+        editTagName,
       }}>
       {children}
     </TagToolContext.Provider>

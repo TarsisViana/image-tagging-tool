@@ -104,7 +104,7 @@ export default function Canvas() {
         stroke: 'yellow',
         strokeWidth: 3/scale,
         id: crypto.randomUUID(),
-        name:''
+        name:null,
       };
       //handle negative values
       const normalizedTag = normalizeTag(tag)
@@ -167,6 +167,7 @@ export default function Canvas() {
                   isSelected={rect.id === selectedId}
                   onSelect={() => {
                     selectTag(rect.id);
+                    console.log(rect)
                   }}
                   onChange={(newAttrs: Rectangle) => {
                     editTag(newAttrs,index)

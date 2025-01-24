@@ -11,7 +11,6 @@ export function normalizeTag(tag:Rectangle) {
         width: Math.abs(tag.width),
         height: Math.abs(tag.height),
       }
-      console.log(normalizedTag)
       return normalizedTag;
     }
     const normalizedTag = {

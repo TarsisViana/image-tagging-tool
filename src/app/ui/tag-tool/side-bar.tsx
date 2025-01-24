@@ -2,16 +2,37 @@
 
 import { createTagName } from "@/app/lib/actions";
 import { useTagContext } from "@/context/TagToolContext";
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Modal } from "react-bootstrap"
 import Button from 'react-bootstrap/Button'
 
 
 export default function TagNameList() {
-  const{tagNameList} = useTagContext()
+  const {tagNameList, selectedId, tagList, editTagName} = useTagContext()
   const [modalShow, setModalShow] = useState(false);
+  const [currentName, setCurrentName] = useState()
+  
 
-  const handleShow= () => setModalShow(true)
+  useEffect(() => {
+    const tagName = tagList.find((tag) => tag.id == selectedId)?.name
+    if (tagName) {
+      setCurrentName(tagName)
+    } else {
+      setCurrentName(null)
+    }
+    
+  
+  },[selectedId,tagList])
+
+  const handleShow = () => setModalShow(true)
+  function handleClick(e) {
+    console.log(e.target.id)
+    if (selectedId) {
+      editTagName(e.target.id)
+      setCurrentName(e.target.id)
+    }
+    
+  }
   
   return (
     <>
@@ -20,14 +41,21 @@ export default function TagNameList() {
         onClick={handleShow}
       >Add Tag Name
       </Button>
-      <ul className="list-group">
-        {tagNameList.map(name => {
-          return <button
-            className="list-group-item list-group-item-action"
-            key={name}
-          >{name}</button>
+      <div className="d-grid gap-2 m-3"> 
+        {tagNameList.map((name, index) => {
+          return ( 
+            <Button
+              key={name}
+              variant={currentName === name ? 'secondary' : 'outline-secondary'}
+              onClick={handleClick}
+              id={name}
+            >
+              {name}
+            </Button>
+          )  
         })}
-      </ul>
+        
+      </div>
       <Dialog show={modalShow} setShow={setModalShow} tagList ={tagNameList}/>
     </>
   )
@@ -39,7 +67,6 @@ function Dialog({show,setShow,tagList}) {
   const formRef = useRef(null)
   
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   
   function handleSave() {
     const input : HTMLInputElement | null = inputRef.current
