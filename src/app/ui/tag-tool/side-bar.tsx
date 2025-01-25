@@ -7,7 +7,34 @@ import { Modal } from "react-bootstrap"
 import Button from 'react-bootstrap/Button'
 
 export default function SideBar() {
-  const { selectedId, deleteTag } = useTagContext()
+  const { tagList, selectedId, deleteTag } = useTagContext()
+
+  function handleDownload() {
+    const tagArr = tagList.map((tag) => {
+      const x2 = tag.x + tag.width;
+      const y2 = tag.y + tag.height;
+      return ({
+        p1: [tag.x, tag.y],
+        p2: [x2, y2],
+        tagName: tag.tagName
+      })
+    })
+    
+    const jsonString = JSON.stringify(tagArr)
+    const blob = new Blob([jsonString], { type: 'text/json' })
+    // Create an anchor element and dispatch a click event on it
+    // to trigger a download
+    const a = document.createElement('a')
+    a.download = 'test.json'
+    a.href = window.URL.createObjectURL(blob)
+    const clickEvt = new MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true,
+    })
+    a.dispatchEvent(clickEvt)
+    a.remove()
+  }
   return (
     <>
       <p>{selectedId}</p>
@@ -17,6 +44,12 @@ export default function SideBar() {
         onClick={deleteTag}
       >
         Delete Tag
+      </Button>
+      <Button
+        variant="dark"
+        onClick={handleDownload}
+      >
+        Download
       </Button>
     </>
   )

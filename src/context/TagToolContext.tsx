@@ -43,12 +43,12 @@ const initialRect: Rectangle[] = [{
   stroke: 'red',
   strokeWidth: 3,
   id: 'rect1',
-  tagName: 'big dogs',
+  tagName: 'big dog',
 }];
 
 export function TagToolProvider({ children }: { children: React.ReactNode }) {
   const [tagList, setTagList] = useState<Rectangle[]>(initialRect);
-  const [tagNameList, setTagNameList] = useState<string[]>(['dog', 'big dogs'])
+  const [tagNameList, setTagNameList] = useState<string[]>(['small dog', 'big dog'])
   const [selectedId, selectTag] = useState<string | null>(null);
 
   function addTag(tag:Rectangle) {
