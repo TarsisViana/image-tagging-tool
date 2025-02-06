@@ -1,13 +1,31 @@
 'use-client'
 
-import { createTagName } from "@/app/lib/actions";
+import { createLabel } from "@/app/lib/actions";
 import { useTagContext } from "@/context/TagToolContext";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
-import { Modal } from "react-bootstrap"
+import { Form, Modal } from "react-bootstrap"
 import Button from 'react-bootstrap/Button'
 
 export default function SideBar() {
-  const { tagList, selectedId, deleteTag } = useTagContext()
+  const { tagList, selectedId, selectTag, deleteTag, edit, setEdit } = useTagContext()
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const input = inputRef.current;
+    if (selectedId && input) {
+      input.focus();
+    }
+  },[selectedId])
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    const input = inputRef.current;
+    handleSaveValue(input?.value);
+  }
+
+  function handleSaveValue(e) {
+    //save e.value
+  }
 
   function handleDownload() {
     const tagArr = tagList.map((tag) => {
@@ -16,14 +34,13 @@ export default function SideBar() {
       return ({
         p1: [tag.x, tag.y],
         p2: [x2, y2],
-        tagName: tag.tagName
+        label: tag.label
       })
     })
     
     const jsonString = JSON.stringify(tagArr)
     const blob = new Blob([jsonString], { type: 'text/json' })
-    // Create an anchor element and dispatch a click event on it
-    // to trigger a download
+    
     const a = document.createElement('a')
     a.download = 'test.json'
     a.href = window.URL.createObjectURL(blob)
@@ -37,8 +54,30 @@ export default function SideBar() {
   }
   return (
     <>
-      <p>{selectedId}</p>
-      <TagNameList />
+      <Button
+        variant={edit ? 'success' : 'danger'}
+        onClick={() => {
+          setEdit(!edit)
+          if(edit) selectTag(null)
+        }}
+      >edit</Button>
+      <div className="d-flex flex-column m-1">
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="" controlId="tagValueForm">
+            <Form.Label>Value:</Form.Label>
+            <Form.Control
+              type="text"
+              name='tagValue'
+              ref={inputRef}
+              disabled={selectedId ? false : true}
+              onBlur={(e) => { e.target.value = '' }}
+              placeholder= {selectedId && tagList.find(tag => tag.id === selectedId).label}
+            />
+          </Form.Group>
+        </Form>
+        <LabelList />
+      </div>
+      
       <Button
         variant="danger"
         onClick={deleteTag}
@@ -55,17 +94,17 @@ export default function SideBar() {
   )
 }
 
-function TagNameList() {
-  const { tagNameList, selectedId, tagList, editTagName } = useTagContext();
+function LabelList() {
+  const { labelList, selectedId, tagList, editLabel } = useTagContext();
   
   const [modalShow, setModalShow] = useState(false);
   const [currentName, setCurrentName] = useState<string | null>(null);
   
 
   useEffect(() => {
-    const tagName = tagList.find((tag) => tag.id == selectedId)?.tagName
-    if (tagName) {
-      setCurrentName(tagName)
+    const label = tagList.find((tag) => tag.id == selectedId)?.label
+    if (label) {
+      setCurrentName(label)
     } else {
       setCurrentName(null)
     }
@@ -80,7 +119,7 @@ function TagNameList() {
   function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
     if (selectedId) {
       const button = e.target as HTMLButtonElement
-      editTagName(button.id)
+      editLabel(button.id)
       setCurrentName(button.id)
     }
     
@@ -88,27 +127,27 @@ function TagNameList() {
   
   return (
     <>
-      <Button
-        variant="primary"
-        onClick={handleShow}
-      >Add Tag Name
-      </Button>
       <div className="d-grid gap-2 m-3"> 
-        {tagNameList.map((name, index) => {
+        {labelList.map((label, index) => {
           return ( 
             <Button
               key={index}
               variant={'outline-secondary'}
               onClick={handleClick}
-              id={name}
-              active={currentName === name}
+              id={label.name}
+              active={currentName === label.name}
             >
-              {name}
+              {label.name}
             </Button>
           )  
         })}
         
       </div>
+      <Button
+        variant="primary"
+        onClick={handleShow}
+      >New Label
+      </Button>
       <Dialog show={modalShow} setShow={setModalShow}/>
     </>
   )
@@ -118,7 +157,7 @@ function Dialog({ show, setShow }: {
   show: boolean,
   setShow: Dispatch<SetStateAction<boolean>>,
 }) {
-  const { addTagName } = useTagContext()
+  const { addLabel } = useTagContext()
   const inputRef = useRef<HTMLInputElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
   
@@ -127,7 +166,7 @@ function Dialog({ show, setShow }: {
   function handleSave() {
     const input  = inputRef?.current
     if (input) {
-      addTagName(input.value)
+      addLabel(input.value)
     }
     setShow(false)
   }
@@ -140,7 +179,7 @@ function Dialog({ show, setShow }: {
       </Modal.Header>
       <Modal.Body>
         <div className="mb-3">
-          <form action={createTagName} ref={formRef}>
+          <form action={createLabel} ref={formRef}>
             <label htmlFor="tag-name" className="col-form-label">Name:</label>
             <input
               type="text"
@@ -160,6 +199,5 @@ function Dialog({ show, setShow }: {
         </Button>
       </Modal.Footer>
     </Modal>
-  
   )
 }

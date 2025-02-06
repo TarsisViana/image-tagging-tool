@@ -1,5 +1,5 @@
 'use server'
 
-export async function createTagName(formData: FormData) {
+export async function createLabel(formData: FormData) {
   console.log('working')
 }

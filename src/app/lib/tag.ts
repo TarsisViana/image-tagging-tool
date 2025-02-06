@@ -1,29 +1,60 @@
-import { Rectangle } from "../ui/tag-tool/tag-tool"
+import { Tag } from "@/context/TagToolContext";
 
-export function normalizeTag(tag:Rectangle) {
-  if (tag.width > 0 && tag.height > 0) return tag
-  if (tag.width < 0) {
-    if (tag.height < 0) {
-      const normalizedTag = {
-        ...tag,
-        x: tag.x + tag.width,
-        y: tag.y + tag.height,
-        width: Math.abs(tag.width),
-        height: Math.abs(tag.height),
+
+export function normalizeTag(rect: {
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+}) {
+  if (rect.width > 0 && rect.height > 0) {
+    const tag = {
+      xMin: rect.x,
+      yMin: rect.y,
+      xMax: rect.x + rect.width, 
+      yMax: rect.y + rect.height,
+      value: '',
+      label: null,
+      id: crypto.randomUUID()
+    }
+    return tag
+  }
+  if (rect.width < 0) {
+    if (rect.height < 0) {
+      const normalizedTag: Tag = {
+        xMin: rect.x + rect.width,
+        yMin: rect.y + rect.height,
+        xMax: Math.abs(rect.width) + (rect.x + rect.width),
+        yMax: Math.abs(rect.height) + (rect.y + rect.height),
+        value: '',
+        label: null,
+        id: crypto.randomUUID()
+      }
+      return normalizedTag;
+    } else if (rect.height > 0) {
+      const normalizedTag: Tag = {
+        xMin: rect.x + rect.width,
+        yMin: rect.y,
+        xMax: Math.abs(rect.width) + (rect.x + rect.width),
+        yMax: Math.abs(rect.height) + rect.y,
+        value: '',
+        label: null,
+        id: crypto.randomUUID()
       }
       return normalizedTag;
     }
-    const normalizedTag = {
-      ...tag,
-      x: tag.x + tag.width,
-      width: Math.abs(tag.width),
-    }
-    return normalizedTag;
-  }
-  const normalizedTag = {
-    ...tag,
-    y: tag.y + tag.height,
-    height: Math.abs(tag.height),
+  } 
+  // if height < 0
+  const normalizedTag: Tag = {
+    xMin: rect.x,
+    yMin: rect.y + rect.height,
+    xMax: Math.abs(rect.width) + rect.x,
+    yMax: Math.abs(rect.height) + (rect.y + rect.height),
+    value: '',
+    label: null,
+    id: crypto.randomUUID()
   }
   return normalizedTag;
+  
+  
 }

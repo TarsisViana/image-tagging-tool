@@ -1,7 +1,7 @@
-import {useEffect, useRef} from 'react';
+import { useEffect, useRef} from 'react';
 import Konva from 'konva';
 import { Rect, Transformer } from 'react-konva';
-import { Rectangle } from '@/context/TagToolContext';
+import { Rectangle, useTagContext } from '@/context/TagToolContext';
 
 
 interface TagProps {
@@ -14,6 +14,7 @@ interface TagProps {
 export default function Tag ({ tagProps, isSelected, onSelect, onChange }: TagProps) {
   const shapeRef = useRef<Konva.Rect | null>(null);
   const transformerRef = useRef<Konva.Transformer | null>(null);
+  const {edit} = useTagContext()
 
   useEffect(() => {
     const transformer = transformerRef.current;
@@ -51,11 +52,12 @@ export default function Tag ({ tagProps, isSelected, onSelect, onChange }: TagPr
   return (
     <>
       <Rect
+        className= 'tag'
         onMouseDown={onSelect}
         ref={shapeRef}
         fill='transparent'
         {...tagProps}
-        draggable
+        draggable = {edit}
         onDragEnd={(e) => {
           onChange({
             ...tagProps,

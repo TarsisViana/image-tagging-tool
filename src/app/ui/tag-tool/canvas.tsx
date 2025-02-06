@@ -13,8 +13,9 @@ import { Rectangle, useTagContext } from '@/context/TagToolContext';
 
 
 export default function Canvas() {
-  const { tagList, addTag, selectedId, selectTag, deleteTag, editTag } = useTagContext()
+  const { tagList, addTag, selectedId, selectTag, deleteTag, editTag, edit, labelList } = useTagContext()
   const [isDrawing, setDrawing] = useState(false);
+  
   
   
   //stage size
@@ -24,6 +25,27 @@ export default function Canvas() {
 
   const stageRef = useRef<Konva.Stage>(null);
   const constructorRef = useRef<Konva.Rect>(null);
+
+
+  const recList = tagList.map((tag) => {
+    let label, color = 'grey';
+    if (tag.label) {
+      label = labelList.find(label => label.name == tag.label)
+      if (label) {
+        color = label.color
+      } 
+    }
+    const rect = {
+      x: tag.xMin,
+      y: tag.yMin,
+      width: tag.xMax - tag.xMin,
+      height: tag.yMax - tag.yMin,
+      stroke: color,
+      strokeWidth: 3 / scale,
+      id: tag.id,
+    };
+    return rect;
+  })
 
   useEffect(() => {
     function onDeleteKey(e: KeyboardEvent) {
@@ -55,9 +77,9 @@ export default function Canvas() {
   },[])
 
   function handleMouseDown(e: KonvaEventObject<MouseEvent, Konva.Node>) {
-    const clickedOnTag = e.target.name() === 'tag'
+    const clickedOnTag = e.target.getClassName() === 'Rect'
     
-    if (!clickedOnTag) {
+    if (!edit || !clickedOnTag) {
       const node = stageRef.current
       const constructor = constructorRef.current;
 
@@ -90,12 +112,12 @@ export default function Canvas() {
     if (!isDrawing) return;
     setDrawing(false)
 
-    //create new tag and add to array with size minimum
+    //create new tag and add to array with minimum size
     const constructor = constructorRef.current;
     if (constructor
       && (constructor.width() > 20 || constructor.width() < -20)
       && (constructor.height() > 20 || constructor.height() < -20)) {
-      const tag = {
+      const rect = {
         x: constructor.x(),
         y: constructor.y(),
         width: constructor.width(),
@@ -103,12 +125,12 @@ export default function Canvas() {
         stroke: 'yellow',
         strokeWidth: 3/scale,
         id: crypto.randomUUID(),
-        name:null,
+        label:null,
       };
       //handle negative values
-      const normalizedTag = normalizeTag(tag)
+      const normalizedTag = normalizeTag(rect)
       addTag(normalizedTag)
-      selectTag(tag.id)
+      selectTag(normalizedTag.id)
     }
 
     //reset constructor
@@ -150,6 +172,12 @@ export default function Canvas() {
           name="canvas"
           ref={stageRef} 
           container='canvasContainer'
+          onMouseEnter={() => {
+            document.body.style.cursor = edit ? 'pointer' : 'crosshair'
+          }}
+          onMouseLeave={() => {
+            document.body.style.cursor = 'auto'
+          }}
         >
           <BaseImage
             selectTag={selectTag}
@@ -158,15 +186,14 @@ export default function Canvas() {
             containerSize={containerSize}
           />
           <Layer>
-            {tagList && tagList.map((rect, index) => {
+            {tagList && recList.map((rect, index) => {
               return (
                 <Tag
                   key={index}
                   tagProps={rect}
                   isSelected={rect.id === selectedId}
                   onSelect={() => {
-                    selectTag(rect.id);
-                    console.log(rect)
+                    if (edit) selectTag(rect.id);
                   }}
                   onChange={(newAttrs: Rectangle) => {
                     editTag(newAttrs,index)

@@ -8,50 +8,71 @@ export interface Rectangle {
   stroke: string,
   strokeWidth: number,
   id: string
-  tagName: string | null
 }
 
+export interface Tag  {
+  xMin: number,
+  xMax: number,
+  yMax: number,
+  yMin:number,
+  value: string,
+  label: string | null,
+  id: string,
+}
+
+export type label = {
+  name: string,
+  color: string,
+}
+  
+
 type TagToolContextProps = {
-  tagList: Rectangle[],
-  tagNameList: string[],
+  tagList: Tag[],
+  labelList: label[],
   selectedId: string | null,
   deleteTag: () => void,
-  addTag: (tag: Rectangle) => void,
-  editTag: (tag:Rectangle, index:number) => void,
-  addTagName: (name: string) => void,
+  addTag: (tag: Tag) => void,
+  editTag: (rect: Rectangle, index:number) => void,
+  addLabel: (name: string) => void,
   selectTag: Dispatch<SetStateAction<string | null>>,
-  editTagName: (name:string) => void
+  editLabel: (name: string) => void, 
+  edit: boolean,
+  setEdit: Dispatch<SetStateAction<boolean>>
 }
 
 const TagToolContext = createContext<TagToolContextProps>({
   tagList: [],
   addTag: ()=>{},
-  tagNameList: [],
+  labelList: [],
   selectedId: '',
   selectTag: () => {},
   deleteTag: () => {},
   editTag: () => {},
-  addTagName: () => {},
-  editTagName: () => {},
+  addLabel: () => {},
+  editLabel: () => {},
+  edit: false,
+  setEdit: () => {},
 })
 
-const initialRect: Rectangle[] = [{
-  x: 20,
-  y: 20,
-  width: 100,
-  height: 100,
-  stroke: 'red',
-  strokeWidth: 3,
+const initialTag: Tag[] = [{
+  xMin: 20,
+  yMin: 20,
+  xMax: 120,
+  yMax: 120,
   id: 'rect1',
-  tagName: 'big dog',
+  label: 'big dog',
+  value: 'test tag'
 }];
 
 export function TagToolProvider({ children }: { children: React.ReactNode }) {
-  const [tagList, setTagList] = useState<Rectangle[]>(initialRect);
-  const [tagNameList, setTagNameList] = useState<string[]>(['small dog', 'big dog'])
+  const [tagList, setTagList] = useState<Tag[]>(initialTag);
+  const [labelList, setLabelList] = useState<label[]>([
+    { name: 'small dog', color: 'red' },
+    { name: 'big dog', color: 'blue' }])
   const [selectedId, selectTag] = useState<string | null>(null);
+  const [edit, setEdit] = useState<boolean>(false)
 
-  function addTag(tag:Rectangle) {
+  function addTag( tag : Tag ) {
     const newArr = tagList.slice()
     newArr.push(tag)
     setTagList(newArr);
@@ -70,26 +91,33 @@ export function TagToolProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  function editTag(tag:Rectangle, index:number) {
+  function editTag(rect:Rectangle, index:number) {
     const newArr = tagList.slice();
-    newArr[index] = tag;
+    const oldTag = newArr[index]
+    newArr[index] = {
+      ... oldTag,
+      xMin: rect.x,
+      yMin: rect.y,
+      xMax: rect.width + rect.x,
+      yMax: rect.height + rect.y,
+    };
     setTagList(newArr);
   }
 
-  function addTagName(name:string) {
-    const nameArr = tagNameList;
-    nameArr.push(name);
-    setTagNameList(nameArr);
+  function addLabel(name:string) {
+    const nameArr = labelList;
+    nameArr.push({name, color: 'blue'});
+    setLabelList(nameArr);
   }
 
-  function editTagName(name: string) {
+  function editLabel(name: string) {
     const id = selectedId
     if (!selectedId) return
 
     const index = tagList.findIndex((tag) => tag.id === id)
     if (index >= 0) {
       const newArr = tagList.slice()
-      newArr[index] = { ...newArr[index],tagName: name};
+      newArr[index] = { ...newArr[index],label: name};
 
       setTagList(newArr)
       return
@@ -100,13 +128,15 @@ export function TagToolProvider({ children }: { children: React.ReactNode }) {
       value={{
         tagList,
         addTag,
-        tagNameList,
-        addTagName,
+        labelList,
+        addLabel,
         deleteTag,
         selectedId,
         selectTag,
         editTag,
-        editTagName,
+        editLabel,
+        edit,
+        setEdit
       }}>
       {children}
     </TagToolContext.Provider>
