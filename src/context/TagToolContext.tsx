@@ -1,3 +1,4 @@
+import { getRandomColors } from "@/app/lib/color"
 import { createContext, Dispatch, SetStateAction, useContext, useState } from "react"
 
 export interface Rectangle {
@@ -22,9 +23,10 @@ export interface Tag  {
 
 export type label = {
   name: string,
-  color: string,
+  id: string,
 }
-  
+
+
 
 type TagToolContextProps = {
   tagList: Tag[],
@@ -32,12 +34,14 @@ type TagToolContextProps = {
   selectedId: string | null,
   deleteTag: () => void,
   addTag: (tag: Tag) => void,
-  editTag: (rect: Rectangle, index:number) => void,
+  editTag: (rect: Rectangle, index: number) => void,
+  editTagValue: (value:string) => void,
   addLabel: (name: string) => void,
   selectTag: Dispatch<SetStateAction<string | null>>,
   editLabel: (name: string) => void, 
   edit: boolean,
-  setEdit: Dispatch<SetStateAction<boolean>>
+  setEdit: Dispatch<SetStateAction<boolean>>,
+  colorList: string[],
 }
 
 const TagToolContext = createContext<TagToolContextProps>({
@@ -47,11 +51,13 @@ const TagToolContext = createContext<TagToolContextProps>({
   selectedId: '',
   selectTag: () => {},
   deleteTag: () => {},
-  editTag: () => {},
+  editTag: () => { },
+  editTagValue: () => {},
   addLabel: () => {},
   editLabel: () => {},
   edit: false,
-  setEdit: () => {},
+  setEdit: () => { },
+  colorList: [],
 })
 
 const initialTag: Tag[] = [{
@@ -64,14 +70,17 @@ const initialTag: Tag[] = [{
   value: 'test tag'
 }];
 
-export function TagToolProvider({ children }: { children: React.ReactNode }) {
+export function TagToolProvider({ children }: { children: React.ReactNode }) { 
   const [tagList, setTagList] = useState<Tag[]>(initialTag);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [colorList, setColorList] = useState(getRandomColors());
   const [labelList, setLabelList] = useState<label[]>([
-    { name: 'small dog', color: 'red' },
-    { name: 'big dog', color: 'blue' }])
+    { name: 'small dog', id: crypto.randomUUID() },
+    { name: 'big dog', id: crypto.randomUUID() }])
   const [selectedId, selectTag] = useState<string | null>(null);
   const [edit, setEdit] = useState<boolean>(false)
-
+  
+  
   function addTag( tag : Tag ) {
     const newArr = tagList.slice()
     newArr.push(tag)
@@ -104,9 +113,17 @@ export function TagToolProvider({ children }: { children: React.ReactNode }) {
     setTagList(newArr);
   }
 
+  function editTagValue(str: string) {
+    const index = tagList.findIndex(tag=> tag.id === selectedId)
+    tagList[index] = {
+      ...tagList[index],
+      value: str,
+    }
+  }
+
   function addLabel(name:string) {
     const nameArr = labelList;
-    nameArr.push({name, color: 'blue'});
+    nameArr.push({name, id: crypto.randomUUID()});
     setLabelList(nameArr);
   }
 
@@ -134,9 +151,11 @@ export function TagToolProvider({ children }: { children: React.ReactNode }) {
         selectedId,
         selectTag,
         editTag,
+        editTagValue,
         editLabel,
         edit,
-        setEdit
+        setEdit,
+        colorList
       }}>
       {children}
     </TagToolContext.Provider>

@@ -7,38 +7,37 @@ import { Form, Modal } from "react-bootstrap"
 import Button from 'react-bootstrap/Button'
 
 export default function SideBar() {
-  const { tagList, selectedId, selectTag, deleteTag, edit, setEdit } = useTagContext()
+  const { tagList, selectedId, selectTag, deleteTag, edit, setEdit, editTagValue } = useTagContext()
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const [inputValue, setValue] = useState('')
+
+  
 
   useEffect(() => {
     const input = inputRef.current;
     if (selectedId && input) {
       input.focus();
+      const value = tagList.find(tag => tag.id === selectedId)?.value
+      if (value) {
+        setValue(value)
+      }
+      else {
+        setValue('')
+      }
+    } else {
+      setValue('')
     }
-  },[selectedId])
-
-  function handleSubmit(e) {
-    e.preventDefault()
-    const input = inputRef.current;
-    handleSaveValue(input?.value);
-  }
-
-  function handleSaveValue(e) {
-    //save e.value
+  }, [selectedId, tagList])
+  
+  function handleChange(e) {
+    setValue(e.target.value);
+    //make function to change value
+    editTagValue(e.target.value)
   }
 
   function handleDownload() {
-    const tagArr = tagList.map((tag) => {
-      const x2 = tag.x + tag.width;
-      const y2 = tag.y + tag.height;
-      return ({
-        p1: [tag.x, tag.y],
-        p2: [x2, y2],
-        label: tag.label
-      })
-    })
-    
-    const jsonString = JSON.stringify(tagArr)
+    const jsonString = JSON.stringify(tagList)
     const blob = new Blob([jsonString], { type: 'text/json' })
     
     const a = document.createElement('a')
@@ -62,7 +61,7 @@ export default function SideBar() {
         }}
       >edit</Button>
       <div className="d-flex flex-column m-1">
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={ e => e.preventDefault()}>
           <Form.Group className="" controlId="tagValueForm">
             <Form.Label>Value:</Form.Label>
             <Form.Control
@@ -70,8 +69,8 @@ export default function SideBar() {
               name='tagValue'
               ref={inputRef}
               disabled={selectedId ? false : true}
-              onBlur={(e) => { e.target.value = '' }}
-              placeholder= {selectedId && tagList.find(tag => tag.id === selectedId).label}
+              value={inputValue}
+              onChange={handleChange}
             />
           </Form.Group>
         </Form>

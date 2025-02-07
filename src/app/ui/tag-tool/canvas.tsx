@@ -13,7 +13,7 @@ import { Rectangle, useTagContext } from '@/context/TagToolContext';
 
 
 export default function Canvas() {
-  const { tagList, addTag, selectedId, selectTag, deleteTag, editTag, edit, labelList } = useTagContext()
+  const { tagList, addTag, selectedId, selectTag, deleteTag, editTag, edit, labelList, colorList } = useTagContext()
   const [isDrawing, setDrawing] = useState(false);
   
   
@@ -28,11 +28,11 @@ export default function Canvas() {
 
 
   const recList = tagList.map((tag) => {
-    let label, color = 'grey';
+    let labelIndex, color = 'grey';
     if (tag.label) {
-      label = labelList.find(label => label.name == tag.label)
-      if (label) {
-        color = label.color
+      labelIndex = labelList.findIndex(label => label.name === tag.label)
+      if (labelIndex >= 0) {
+        color = colorList[labelIndex]
       } 
     }
     const rect = {
@@ -49,7 +49,7 @@ export default function Canvas() {
 
   useEffect(() => {
     function onDeleteKey(e: KeyboardEvent) {
-      if (e.key === "Delete" || e.key === "Backspace") {
+      if (e.key === "Delete") {
         deleteTag();
       }
     } 
@@ -122,10 +122,6 @@ export default function Canvas() {
         y: constructor.y(),
         width: constructor.width(),
         height: constructor.height(),
-        stroke: 'yellow',
-        strokeWidth: 3/scale,
-        id: crypto.randomUUID(),
-        label:null,
       };
       //handle negative values
       const normalizedTag = normalizeTag(rect)
