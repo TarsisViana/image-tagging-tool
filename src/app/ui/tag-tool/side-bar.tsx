@@ -30,7 +30,7 @@ export default function SideBar() {
     }
   }, [selectedId, tagList])
   
-  function handleChange(e) {
+  function handleChange(e:React.ChangeEvent<HTMLInputElement>) {
     setValue(e.target.value);
     //make function to change value
     editTagValue(e.target.value)

@@ -42,6 +42,7 @@ type TagToolContextProps = {
   edit: boolean,
   setEdit: Dispatch<SetStateAction<boolean>>,
   colorList: string[],
+  imageName: string,
 }
 
 const TagToolContext = createContext<TagToolContextProps>({
@@ -58,6 +59,7 @@ const TagToolContext = createContext<TagToolContextProps>({
   edit: false,
   setEdit: () => { },
   colorList: [],
+  imageName: '',
 })
 
 const initialTag: Tag[] = [{
@@ -70,7 +72,8 @@ const initialTag: Tag[] = [{
   value: 'test tag'
 }];
 
-export function TagToolProvider({ children }: { children: React.ReactNode }) { 
+export function TagToolProvider({ children, imageName }: { children: React.ReactNode, imageName: string }) { 
+
   const [tagList, setTagList] = useState<Tag[]>(initialTag);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [colorList, setColorList] = useState(getRandomColors());
@@ -155,7 +158,8 @@ export function TagToolProvider({ children }: { children: React.ReactNode }) {
         editLabel,
         edit,
         setEdit,
-        colorList
+        colorList,
+        imageName
       }}>
       {children}
     </TagToolContext.Provider>

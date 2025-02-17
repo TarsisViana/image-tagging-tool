@@ -1,4 +1,7 @@
-import React, { useEffect } from "react";
+import { loadImage } from "@/app/lib/loader";
+import { useTagContext } from "@/context/TagToolContext";
+
+import React, { useEffect, useState } from "react";
 import { Image, Layer } from "react-konva";
 import useImage from "use-image";
 
@@ -10,7 +13,23 @@ export default function BaseImage({ selectTag, setScale, setSize, containerSize 
     setSize: (arg: { width: number, height: number }) => void,
     containerSize: { width:number, height:number }
   }) {
-  const [image] = useImage('/pic.png');
+  
+  const {imageName} = useTagContext()
+  const [imgBase64, setImgBase64] = useState<string>('');
+
+ 
+
+  useEffect(() => {
+    async function getImageFromParams() {
+      const imgData = await loadImage(imageName)
+
+      if (imgData) setImgBase64(imgData);
+    }
+    
+    getImageFromParams()
+  }, [imageName])
+  
+  const [image] = useImage(imgBase64);
 
   useEffect(() => {
     if (!image) return
