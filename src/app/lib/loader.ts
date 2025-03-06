@@ -23,8 +23,18 @@ export async function loadImage(name:string) {
 export async function getImageList(path:string) {
   try {
     const files = await fs.readdir(path, { withFileTypes: true })
+    
     const images = files.filter(isImage)
-    const jsonImages = JSON.stringify({success:true,images})
+    const imageList = await Promise.all(images.map(async image => {
+      const labels = await getLabels(image.name, image.path)
+      return {
+        name: image.name,
+        labels
+      }
+    }))
+
+
+    const jsonImages = JSON.stringify({success:true,imageList})
     return jsonImages
 
   } catch (err) {
@@ -42,3 +52,21 @@ function isImage(file: Dirent) {
   const test = fileExtName === '.jpg' || fileExtName === '.png' || fileExtName === '.jpeg' || fileExtName === '.tiff'
   return test
 };
+function isJson(file: Dirent) {
+  const fileExtName = path.extname(file.name).toLowerCase()
+  const test = fileExtName === '.json'
+  return test
+};
+
+
+async function getLabels(name,folderPath) {
+  const fileName = path.parse(name).name
+  try {
+    const data = await fs.readFile(`${folderPath}/${fileName}.json`, 'utf8')
+    const labels = JSON.parse(data)
+    return labels
+  } catch (err) {
+    console.log(err)
+    return []
+  }
+}

@@ -15,7 +15,7 @@ export default function FolderPathForm({setImageList}) {
       const response = JSON.parse(data)
       if (response.success) {
         setPathCheck(true)
-        setImageList(response.images)
+        setImageList(response.imageList)
       } else {
         setPathCheck(false)
       }

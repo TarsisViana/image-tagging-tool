@@ -8,7 +8,6 @@ export default function Home() {
   
   return (
     <div className='container'>
-      
       <div>
         <FolderPathForm setImageList={setImageList} />
       </div>
