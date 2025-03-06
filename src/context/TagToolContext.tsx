@@ -1,36 +1,10 @@
 import { getRandomColors } from "@/app/lib/color"
+import { Rectangle, Tag , Label} from "@/types";
 import { createContext, Dispatch, SetStateAction, useContext, useState } from "react"
-
-export interface Rectangle {
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  stroke: string,
-  strokeWidth: number,
-  id: string
-}
-
-export interface Tag  {
-  xMin: number,
-  xMax: number,
-  yMax: number,
-  yMin:number,
-  value: string,
-  label: string | null,
-  id: string,
-}
-
-export type label = {
-  name: string,
-  id: string,
-}
-
-
 
 type TagToolContextProps = {
   tagList: Tag[],
-  labelList: label[],
+  labelList: Label[],
   selectedId: string | null,
   deleteTag: () => void,
   addTag: (tag: Tag) => void,
@@ -77,7 +51,7 @@ export function TagToolProvider({ children, imageName }: { children: React.React
   const [tagList, setTagList] = useState<Tag[]>(initialTag);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [colorList, setColorList] = useState(getRandomColors());
-  const [labelList, setLabelList] = useState<label[]>([
+  const [labelList, setLabelList] = useState<Label[]>([
     { name: 'small dog', id: crypto.randomUUID() },
     { name: 'big dog', id: crypto.randomUUID() }])
   const [selectedId, selectTag] = useState<string | null>(null);

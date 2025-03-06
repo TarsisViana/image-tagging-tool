@@ -1,12 +1,23 @@
+import Link from "next/link";
+import { getImageList } from "../lib/loader";
+const folderPath = '/home/tarsis/Documents/test_imgs'
+export default async function Page() {
 
-import TagTool from "../ui/tag-tool/tag-tool";
+  const fileList = await getImageList(folderPath)
+  console.log(fileList)
 
-export default function Page() {
-  // const [pimba, setPimba] = useState<{
-  //   imgName: {
-  //   taglist: [label:xmax,xmin, ymax,ymin, name]
-  // }}>()
   return (
-    <TagTool/>
+    <>
+      <div>
+        <p>file list:</p>
+        <ul>
+          {fileList?.map((image) => {
+            return <li key={image.name}>
+              <Link href={`dashboard/${image.name}`}>{image.name}</Link>
+            </li>
+          })}
+        </ul>
+      </div>
+    </>
   );
 }
