@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import BootstrapClient from "./ui/bootstrap-client";
+import { AppProvider } from "@/context/AppContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,11 +26,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
-        <BootstrapClient/>
-      </body>
-    </html>
+    <AppProvider>
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable}`}>
+          {children}
+          <BootstrapClient/>
+        </body>
+      </html>
+    </AppProvider>
   );
 }

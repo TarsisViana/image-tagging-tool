@@ -1,3 +1,5 @@
+'use client'
+
 import { ImageFileList } from "@/types"
 import { createContext, Dispatch, SetStateAction, useContext, useState } from "react"
 

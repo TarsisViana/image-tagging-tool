@@ -1,19 +1,19 @@
+'use client'
+
 import Link from "next/link";
-import { getImageList } from "../lib/loader";
-const folderPath = '/home/tarsis/Documents/test_imgs'
-export default async function Page() {
+import { useAppContext } from "@/context/AppContext";
 
-  const fileList = await getImageList(folderPath)
-  console.log(fileList)
-
+export default function Page() {
+  const {imageFileList}= useAppContext()
+  
   return (
     <>
       <div>
         <p>file list:</p>
         <ul>
-          {fileList?.map((image) => {
-            return <li key={image.name}>
-              <Link href={`dashboard/${image.name}`}>{image.name}</Link>
+          {imageFileList.map((image) => {
+            return <li key={image.imgName}>
+              <Link href={`dashboard/${image.imgName}`}>{image.imgName}</Link>
             </li>
           })}
         </ul>

@@ -1,22 +1,21 @@
 'use client'
 
 import FolderPathForm from './ui/folder-path-form'
-import { AppProvider } from '@/context/AppContext';
 import FileList from './ui/file-list';
 import LabelList from './ui/label-list';
+import Link from 'next/link';
 
 export default function Home() {
   return (
-    <AppProvider>
-      <div className='container'>
-        <div>
-          <FolderPathForm/>
-        </div>
-        <div>
-          <FileList />
-          <LabelList/>
-        </div>
+    <div className='container'>
+      <div>
+        <FolderPathForm/>
       </div>
-    </AppProvider>
+      <div>
+        <FileList />
+        <LabelList/>
+      </div>
+      <Link href='/dashboard'>dashboard</Link>
+    </div>
   );
 }
