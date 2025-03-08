@@ -4,8 +4,11 @@ import { useState } from 'react'
 import Form from 'react-bootstrap/Form'
 import { getFolderPath } from '../lib/actions'
 import { Button } from 'react-bootstrap'
+import { useAppContext } from '@/context/AppContext'
 
-export default function FolderPathForm({setImageList, setLabels}) {
+export default function FolderPathForm() {
+  const { setImageList, setLabels, setPath } = useAppContext()
+  
   const [value, setValue] = useState('/home/tarsis/Documents/test_imgs')
   const [pathCheck, setPathCheck] = useState(false)
 
@@ -17,6 +20,7 @@ export default function FolderPathForm({setImageList, setLabels}) {
         setPathCheck(true)
         setImageList(response.imageList)
         setLabels(response.labels)
+        setPath(value)
       } else {
         setPathCheck(false)
       }

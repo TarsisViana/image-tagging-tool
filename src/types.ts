@@ -1,4 +1,4 @@
-export interface Rectangle {
+export type Rectangle = {
   x: number,
   y: number,
   width: number,
@@ -8,14 +8,14 @@ export interface Rectangle {
   id: string
 }
 
-export interface Tag {
+export type Tag = {
   xMin: number,
   xMax: number,
   yMax: number,
   yMin: number,
-  value: string,
+  value?: string,
   label: string | null,
-  id: string,
+  id?: string,
 }
 
 export type Label = {
@@ -23,21 +23,25 @@ export type Label = {
   id: string,
 }
 
+export type ImageFileList = {
+  imgName: string,
+  tags: Tag[]
+}[] 
 
-const exemple: Tag = {
-  xMin: 20,
-  yMin: 20,
-  xMax: 120,
-  yMax: 120,
-  id: 'rect1',
-  label: 'big_dog',
-  value: 'test_tag'
-};
+// const exemple: Tag = {
+//   xMin: 20,
+//   yMin: 20,
+//   xMax: 120,
+//   yMax: 120,
+//   id: 'rect1',
+//   label: 'big_dog',
+//   value: 'test_tag'
+// };
 
-const exempleExport= {
-  xMin: 20,
-  yMin: 20,
-  xMax: 120,
-  yMax: 120,
-  label: 'big_dog.test_tag',
-};
+// const exempleExport= {
+//   xMin: 20,
+//   yMin: 20,
+//   xMax: 120,
+//   yMax: 120,
+//   label: 'big_dog.test_tag',
+// };

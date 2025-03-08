@@ -1,32 +1,22 @@
 'use client'
 
-import { useState } from 'react';
 import FolderPathForm from './ui/folder-path-form'
+import { AppProvider } from '@/context/AppContext';
+import FileList from './ui/file-list';
+import LabelList from './ui/label-list';
 
 export default function Home() {
-  const [imageList, setImageList] = useState([])
-  const [labels, setLabels] = useState([])
-  
   return (
-    <div className='container'>
-      <div>
-        <FolderPathForm setImageList={setImageList} setLabels={setLabels} />
-      </div>
-      <div>
+    <AppProvider>
+      <div className='container'>
         <div>
-          <p>file list:</p>
-          {imageList.map(image => {
-            return <p key={image.imgName}>{image.imgName}</p>
-          })}
+          <FolderPathForm/>
+        </div>
+        <div>
+          <FileList />
+          <LabelList/>
         </div>
       </div>
-      <div>
-        <p>label list</p>
-        {labels.map(label => {
-          return <p key={label}>{label}</p>
-        })}
-        <button>edit</button>
-      </div>
-    </div>
+    </AppProvider>
   );
 }

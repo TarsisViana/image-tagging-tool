@@ -1,8 +1,10 @@
 'use server'
 
+import { ImageFileList } from '@/types'
 import { Dirent } from 'node:fs'
 import fs from 'node:fs/promises'
 import path from 'node:path'
+
 
 const folderPath = '/home/tarsis/Documents/test_imgs'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,10 +27,7 @@ export async function getImageList(path:string) {
     const files = await fs.readdir(path, { withFileTypes: true })
     
     const images = files.filter(isImage)
-    const imageList: {
-      imgName: string,
-      tags: []
-    }[] = await Promise.all(images.map(async image => {
+    const imageList: ImageFileList = await Promise.all(images.map(async image => {
       const tags :[] = await getTags(image.name, image.path)
       return {
         imgName: image.name,
@@ -66,19 +65,25 @@ async function getTags( imgName:string, folderPath:string ) {
   }
 }
 
-function getLabels(imgList:[{imgName:string, tags:[]}]) {
-  const labels:string[] = []
-  for (let i = 0; i < imgList.length; i++){
-    const imgLabels = imgList[i].tags.map(tag => extractGenLabel(tag.label))
+function getLabels(imgList:ImageFileList) {
+  const labels: string[] = []
+  imgList.map(image => {
+    const imgLabels = image.tags.map(tag => {
+      if (tag.label) {
+        return extractGenLabel(tag.label)
+      }
+    })
     if (imgLabels) {
       imgLabels.forEach(label => {
-        const duplicate = labels.includes(label)
-        if (!duplicate) {
-          labels.push(label)
+        if (label) {
+          const duplicate = labels.includes(label)
+          if (!duplicate) {
+            labels.push(label)
+          }
         }
       })
     }
-  }
+  })
   return labels
 }
 
