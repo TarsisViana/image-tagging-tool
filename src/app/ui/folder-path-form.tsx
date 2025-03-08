@@ -5,8 +5,8 @@ import Form from 'react-bootstrap/Form'
 import { getFolderPath } from '../lib/actions'
 import { Button } from 'react-bootstrap'
 
-export default function FolderPathForm({setImageList}) {
-  const [value, setValue] = useState('')
+export default function FolderPathForm({setImageList, setLabels}) {
+  const [value, setValue] = useState('/home/tarsis/Documents/test_imgs')
   const [pathCheck, setPathCheck] = useState(false)
 
   function handleSubmit() {
@@ -16,6 +16,7 @@ export default function FolderPathForm({setImageList}) {
       if (response.success) {
         setPathCheck(true)
         setImageList(response.imageList)
+        setLabels(response.labels)
       } else {
         setPathCheck(false)
       }

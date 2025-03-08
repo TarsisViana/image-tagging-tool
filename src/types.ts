@@ -23,3 +23,21 @@ export type Label = {
   id: string,
 }
 
+
+const exemple: Tag = {
+  xMin: 20,
+  yMin: 20,
+  xMax: 120,
+  yMax: 120,
+  id: 'rect1',
+  label: 'big_dog',
+  value: 'test_tag'
+};
+
+const exempleExport= {
+  xMin: 20,
+  yMin: 20,
+  xMax: 120,
+  yMax: 120,
+  label: 'big_dog.test_tag',
+};

@@ -25,25 +25,26 @@ export async function getImageList(path:string) {
     const files = await fs.readdir(path, { withFileTypes: true })
     
     const images = files.filter(isImage)
-    const imageList = await Promise.all(images.map(async image => {
-      const labels = await getLabels(image.name, image.path)
+    const imageList: {
+      imgName: string,
+      tags: []
+    }[] = await Promise.all(images.map(async image => {
+      const tags :[] = await getTags(image.name, image.path)
       return {
-        name: image.name,
-        labels
+        imgName: image.name,
+        tags
       }
     }))
 
+    const labels = getLabels(imageList)
 
-    const jsonImages = JSON.stringify({success:true,imageList})
+    const jsonImages = JSON.stringify({success:true,imageList,labels})
     return jsonImages
 
   } catch (err) {
     console.log(err)
     return JSON.stringify({success:false})
   }
-
-  //handle not found, validate form
-  // https://nextjs.org/learn/dashboard-app/mutating-data
 }
 
 
@@ -52,21 +53,37 @@ function isImage(file: Dirent) {
   const test = fileExtName === '.jpg' || fileExtName === '.png' || fileExtName === '.jpeg' || fileExtName === '.tiff'
   return test
 };
-function isJson(file: Dirent) {
-  const fileExtName = path.extname(file.name).toLowerCase()
-  const test = fileExtName === '.json'
-  return test
-};
 
 
-async function getLabels(name,folderPath) {
-  const fileName = path.parse(name).name
+async function getTags( imgName:string, folderPath:string ) {
+  const fileName = path.parse(imgName).name
   try {
     const data = await fs.readFile(`${folderPath}/${fileName}.json`, 'utf8')
     const labels = JSON.parse(data)
     return labels
-  } catch (err) {
-    console.log(err)
+  } catch {
     return []
   }
+}
+
+function getLabels(imgList:[{imgName:string, tags:[]}]) {
+  const labels:string[] = []
+  for (let i = 0; i < imgList.length; i++){
+    const imgLabels = imgList[i].tags.map(tag => extractGenLabel(tag.label))
+    if (imgLabels) {
+      imgLabels.forEach(label => {
+        const duplicate = labels.includes(label)
+        if (!duplicate) {
+          labels.push(label)
+        }
+      })
+    }
+  }
+  return labels
+}
+
+function extractGenLabel(individualLabel:string) {
+  const index = individualLabel.lastIndexOf('.')
+  const label = individualLabel.slice(index+1)
+  return label
 }
