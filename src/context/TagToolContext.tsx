@@ -1,6 +1,7 @@
 import { getRandomColors } from "@/app/lib/color"
 import { Rectangle, Tag , Label} from "@/types";
-import { createContext, Dispatch, SetStateAction, useContext, useState } from "react"
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
+import { useAppContext } from "./AppContext";
 
 type TagToolContextProps = {
   tagList: Tag[],
@@ -46,17 +47,41 @@ const initialTag: Tag[] = [{
   value: 'test tag'
 }];
 
-export function TagToolProvider({ children, imageName }: { children: React.ReactNode, imageName: string }) { 
 
-  const [tagList, setTagList] = useState<Tag[]>(initialTag);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function TagToolProvider({ children, imageName }: { children: React.ReactNode, imageName: string }) { 
+  const {imageFileList} = useAppContext()
+  const [tagList, setTagList] = useState<Tag[]>([]);
   const [colorList, setColorList] = useState(getRandomColors());
   const [labelList, setLabelList] = useState<Label[]>([
-    { name: 'small dog', id: crypto.randomUUID() },
-    { name: 'big dog', id: crypto.randomUUID() }])
+    { name: 'small_dog', id: crypto.randomUUID() },
+    { name: 'big_dog', id: crypto.randomUUID() }])
   const [selectedId, selectTag] = useState<string | null>(null);
   const [edit, setEdit] = useState<boolean>(false)
   
+  useEffect(() => {
+    function getFileTags(imgName: string) {
+      const index = imageFileList.findIndex(file => file.imgName == imgName)
+      if (index > -1) return imageFileList[index].tags
+      else return []
+    };
+
+    const fileTags = getFileTags(imageName);
+    const canvasTags = fileTags.map(tag => {
+      const index = tag.label.lastIndexOf('.');
+      const label = tag.label.slice(index + 1)
+      const value = tag.label.slice(0, index)
+      return {
+        xMin: tag.xMin,
+        yMin: tag.yMin,
+        xMax: tag.xMax,
+        yMax: tag.yMax,
+        id: crypto.randomUUID(),
+        label,
+        value
+      }
+    })
+    setTagList(canvasTags)
+  },[])
   
   function addTag( tag : Tag ) {
     const newArr = tagList.slice()

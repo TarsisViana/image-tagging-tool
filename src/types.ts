@@ -8,12 +8,16 @@ export type Rectangle = {
   id: string
 }
 
-export type Tag = {
+export interface FileTag {
   xMin: number,
   xMax: number,
   yMax: number,
   yMin: number,
-  value?: string,
+  label: string,
+}
+
+export interface Tag extends Omit<FileTag, 'label'> {
+  value: string,
   label: string | null,
   id?: string,
 }
@@ -25,7 +29,7 @@ export type Label = {
 
 export type ImageFileList = {
   imgName: string,
-  tags: Tag[]
+  tags: FileTag[]
 }[] 
 
 // const exemple: Tag = {

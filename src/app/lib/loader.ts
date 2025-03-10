@@ -1,6 +1,6 @@
 'use server'
 
-import { ImageFileList } from '@/types'
+import { ImageFileList, FileTag } from '@/types'
 import { Dirent } from 'node:fs'
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -28,7 +28,7 @@ export async function getImageList(path:string) {
     
     const images = files.filter(isImage)
     const imageList: ImageFileList = await Promise.all(images.map(async image => {
-      const tags :[] = await getTags(image.name, image.path)
+      const tags:FileTag[] = await getTags(image.name, image.path)
       return {
         imgName: image.name,
         tags
@@ -58,7 +58,7 @@ async function getTags( imgName:string, folderPath:string ) {
   const fileName = path.parse(imgName).name
   try {
     const data = await fs.readFile(`${folderPath}/${fileName}.json`, 'utf8')
-    const labels = JSON.parse(data)
+    const labels : FileTag[] = JSON.parse(data)
     return labels
   } catch {
     return []

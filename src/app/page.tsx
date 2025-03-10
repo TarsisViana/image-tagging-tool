@@ -11,7 +11,7 @@ export default function Home() {
       <div>
         <FolderPathForm/>
       </div>
-      <div>
+      <div className='d-flex gap-5'>
         <FileList />
         <LabelList/>
       </div>

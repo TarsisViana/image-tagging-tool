@@ -1,7 +1,8 @@
 import { useEffect, useRef} from 'react';
 import Konva from 'konva';
 import { Rect, Transformer } from 'react-konva';
-import { Rectangle, useTagContext } from '@/context/TagToolContext';
+import { useTagContext } from '@/context/TagToolContext';
+import { Rectangle } from '@/types';
 
 
 interface TagProps {

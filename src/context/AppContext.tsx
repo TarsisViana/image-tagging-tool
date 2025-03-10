@@ -1,6 +1,6 @@
 'use client'
 
-import { ImageFileList } from "@/types"
+import { ImageFileList, Tag } from "@/types"
 import { createContext, Dispatch, SetStateAction, useContext, useState } from "react"
 
 
@@ -11,22 +11,28 @@ type AppContextProps = {
   setLabels: Dispatch<SetStateAction<string[]>>,
   imageFileList: ImageFileList,
   setImageList: Dispatch<SetStateAction<ImageFileList>>,
-
+  getTagList: (value:string) => Tag[] | undefined;
 }
 
 const AppContext = createContext<AppContextProps>({
   dirPath: '',
-  setPath: ()=>{},
+  setPath: ()=> {},
   labelList: [],
   setLabels: () => {},
   imageFileList: [],
-  setImageList: () => {}
+  setImageList: () => {},
+  getTagList: () => undefined,
 })
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [imageFileList, setImageList] = useState<ImageFileList>([])
   const [labelList, setLabels] = useState<string[]>([])
   const [dirPath, setPath] = useState<string>('')
+
+  function getTagList(imgName: string) {
+    const index = imageFileList.findIndex(file => file.imgName == imgName)
+    if (index > -1) return imageFileList[index].tags
+  }
 
   return (
     <AppContext.Provider
@@ -36,7 +42,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         imageFileList,
         setImageList,
         labelList,
-        setLabels
+        setLabels,
+        getTagList
       }}
     >
       {children}

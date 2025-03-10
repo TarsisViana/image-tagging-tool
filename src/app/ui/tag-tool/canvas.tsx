@@ -7,7 +7,8 @@ import Tag from './tag';
 import { KonvaEventObject } from 'konva/lib/Node';
 import BaseImage from './base-image';
 import { normalizeTag } from '@/app/lib/tag';
-import { Rectangle, useTagContext } from '@/context/TagToolContext';
+import { useTagContext } from '@/context/TagToolContext';
+import { Rectangle } from '@/types';
 
 
 
