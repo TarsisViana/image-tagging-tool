@@ -2,6 +2,7 @@ import { getRandomColors } from "@/app/lib/color"
 import { Rectangle, Tag , Label} from "@/types";
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
 import { useAppContext } from "./AppContext";
+import { fileToCanvasTags } from "@/app/lib/tag";
 
 type TagToolContextProps = {
   tagList: Tag[],
@@ -37,19 +38,10 @@ const TagToolContext = createContext<TagToolContextProps>({
   imageName: '',
 })
 
-const initialTag: Tag[] = [{
-  xMin: 20,
-  yMin: 20,
-  xMax: 120,
-  yMax: 120,
-  id: 'rect1',
-  label: 'big dog',
-  value: 'test tag'
-}];
-
 
 export function TagToolProvider({ children, imageName }: { children: React.ReactNode, imageName: string }) { 
-  const {imageFileList} = useAppContext()
+  const { imageFileList, updateTagList } = useAppContext()
+  
   const [tagList, setTagList] = useState<Tag[]>([]);
   const [colorList, setColorList] = useState(getRandomColors());
   const [labelList, setLabelList] = useState<Label[]>([
@@ -66,20 +58,7 @@ export function TagToolProvider({ children, imageName }: { children: React.React
     };
 
     const fileTags = getFileTags(imageName);
-    const canvasTags = fileTags.map(tag => {
-      const index = tag.label.lastIndexOf('.');
-      const label = tag.label.slice(index + 1)
-      const value = tag.label.slice(0, index)
-      return {
-        xMin: tag.xMin,
-        yMin: tag.yMin,
-        xMax: tag.xMax,
-        yMax: tag.yMax,
-        id: crypto.randomUUID(),
-        label,
-        value
-      }
-    })
+    const canvasTags = fileToCanvasTags(fileTags)
     setTagList(canvasTags)
   },[])
   
@@ -99,6 +78,7 @@ export function TagToolProvider({ children, imageName }: { children: React.React
 
       setTagList(newArr)
       selectTag(null)
+      updateTagList(imageName, newArr)
     }
   }
 
@@ -113,13 +93,19 @@ export function TagToolProvider({ children, imageName }: { children: React.React
       yMax: rect.height + rect.y,
     };
     setTagList(newArr);
+    updateTagList(imageName, newArr)
   }
 
   function editTagValue(str: string) {
-    const index = tagList.findIndex(tag=> tag.id === selectedId)
-    tagList[index] = {
-      ...tagList[index],
-      value: str,
+    const index = tagList.findIndex(tag => tag.id === selectedId)
+    if (index >= 0) {
+      const newArr = tagList.slice()
+      newArr[index] = {
+        ...tagList[index],
+        value: str,
+      }
+      setTagList(newArr)
+      updateTagList(imageName, newArr)
     }
   }
 
@@ -139,6 +125,7 @@ export function TagToolProvider({ children, imageName }: { children: React.React
       newArr[index] = { ...newArr[index],label: name};
 
       setTagList(newArr)
+      updateTagList(imageName, newArr)
       return
     }
   }

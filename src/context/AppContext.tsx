@@ -1,6 +1,7 @@
 'use client'
 
-import { ImageFileList, Tag } from "@/types"
+import { canvasToFileTags } from "@/app/lib/tag";
+import { FileTag, ImageFileList, Tag } from "@/types"
 import { createContext, Dispatch, SetStateAction, useContext, useState } from "react"
 
 
@@ -11,7 +12,8 @@ type AppContextProps = {
   setLabels: Dispatch<SetStateAction<string[]>>,
   imageFileList: ImageFileList,
   setImageList: Dispatch<SetStateAction<ImageFileList>>,
-  getTagList: (value:string) => Tag[] | undefined;
+  getTagList: (value: string) => FileTag[] | undefined,
+  updateTagList : (name:string, tags:Tag[]) => void
 }
 
 const AppContext = createContext<AppContextProps>({
@@ -22,6 +24,7 @@ const AppContext = createContext<AppContextProps>({
   imageFileList: [],
   setImageList: () => {},
   getTagList: () => undefined,
+  updateTagList: () => {},
 })
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
@@ -34,6 +37,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (index > -1) return imageFileList[index].tags
   }
 
+  function updateTagList(imgName: string, canvasTagList:Tag[]) {
+    const index = imageFileList.findIndex(file => file.imgName == imgName)
+    const fileTags = canvasToFileTags(canvasTagList);
+
+    const tempArr = imageFileList.slice();
+    tempArr[index].tags = fileTags;
+
+    setImageList(tempArr)
+  }
+
   return (
     <AppContext.Provider
       value={{
@@ -43,7 +56,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setImageList,
         labelList,
         setLabels,
-        getTagList
+        getTagList,
+        updateTagList
       }}
     >
       {children}

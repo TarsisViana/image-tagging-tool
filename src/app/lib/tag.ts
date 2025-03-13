@@ -1,4 +1,5 @@
 import { Tag } from "@/context/TagToolContext";
+import { FileTag } from "@/types";
 
 
 export function normalizeTag(rect: {
@@ -57,4 +58,39 @@ export function normalizeTag(rect: {
   return normalizedTag;
   
   
+}
+
+export function fileToCanvasTags(fileTags: FileTag[]) {
+  const canvasTags = fileTags.map(tag => {
+    const index = tag.label.lastIndexOf('.');
+    const label = tag.label.slice(index + 1)
+    const value = tag.label.slice(0, index)
+    return {
+      xMin: tag.xMin,
+      yMin: tag.yMin,
+      xMax: tag.xMax,
+      yMax: tag.yMax,
+      id: crypto.randomUUID(),
+      label,
+      value
+    }
+  })
+
+  return canvasTags
+}
+
+
+export function canvasToFileTags(canvasTags: Tag[]) {
+  const fileTags = canvasTags.map(tag => {
+    const label = `${tag.value}.${tag.label}`
+    return {
+      xMin: tag.xMin,
+      yMin: tag.yMin,
+      xMax: tag.xMax,
+      yMax: tag.yMax,
+      label,
+    }
+  })
+
+  return fileTags
 }
