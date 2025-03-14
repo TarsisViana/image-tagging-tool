@@ -1,20 +1,17 @@
 'use server'
 
-import { ImageFileList, FileTag } from '@/types'
+import { ImageFileList, FileTag, Tag } from '@/types'
 import { Dirent } from 'node:fs'
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { canvasToFileTags } from './tag'
 
 
-const folderPath = '/home/tarsis/Documents/test_imgs'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const fileName = 'Dog-Aging-Infographic_InstaFB-1-1024x1024.png'
-
-export async function loadImage(name:string) {
+export async function loadImage(folderPath:string,imgName:string) {
   try {
-    const data = await fs.readFile(`${folderPath}/${name}`);
+    const data = await fs.readFile(`${folderPath}/${imgName}`);
     const base64Image = data.toString('base64');
-    const mimeType = `image/${path.extname(name).slice(0,1)}`; 
+    const mimeType = `image/${path.extname(imgName).slice(0,1)}`; 
     const base64WithMimeType = `data:${mimeType};base64,${base64Image}`;
     return base64WithMimeType
   } catch (err) {
@@ -91,4 +88,15 @@ function extractGenLabel(individualLabel:string) {
   const index = individualLabel.lastIndexOf('.')
   const label = individualLabel.slice(index+1)
   return label
+}
+
+export async function saveTagsToFolder(tags:Tag[], folderPath:string, imgName:string) {
+  const fileName = `${path.parse(imgName).name}.json`
+  const value = JSON.stringify(canvasToFileTags(tags))
+  console.log(`${folderPath}/${fileName}`)
+  try {
+    fs.writeFile(`${folderPath}/${fileName}`,value, {encoding:'utf8'})
+  } catch (err) {
+    console.log(err)
+  }
 }

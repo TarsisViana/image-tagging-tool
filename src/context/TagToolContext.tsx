@@ -1,8 +1,9 @@
 import { getRandomColors } from "@/app/lib/color"
 import { Rectangle, Tag , ImageFileList} from "@/types";
-import { createContext, Dispatch, SetStateAction, useContext, useState } from "react"
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
 import { useAppContext } from "./AppContext";
 import { fileToCanvasTags } from "@/app/lib/tag";
+import { saveTagsToFolder } from "@/app/lib/loader";
 
 type TagToolContextProps = {
   tagList: Tag[],
@@ -42,7 +43,7 @@ const TagToolContext = createContext<TagToolContextProps>({
 
 
 export function TagToolProvider({ children, imageName }: { children: React.ReactNode, imageName: string }) { 
-  const { imageFileList, updateTagList, labelList, setLabels } = useAppContext()
+  const { imageFileList, updateTagList, labelList, setLabels, dirPath} = useAppContext()
   
   const [tagList, setTagList] = useState<Tag[]>(getImageTagList(imageFileList,imageName));
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -50,6 +51,14 @@ export function TagToolProvider({ children, imageName }: { children: React.React
   const [selectedId, selectTag] = useState<string | null>(null);
   const [edit, setEdit] = useState<boolean>(false)
   
+  useEffect(() => {
+    return () => {
+      (async () => {
+        await saveTagsToFolder(tagList, dirPath, imageName)
+      })()
+    }
+  },[])
+
   function getImageTagList(imageFileList: ImageFileList, imageName: string) {
     const index = imageFileList.findIndex(file => file.imgName == imageName)
     const fileTags = index >= 0 ? imageFileList[index].tags : []

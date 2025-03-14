@@ -1,4 +1,5 @@
 import { loadImage } from "@/app/lib/loader";
+import { useAppContext } from "@/context/AppContext";
 import { useTagContext } from "@/context/TagToolContext";
 
 import React, { useEffect, useState } from "react";
@@ -13,7 +14,7 @@ export default function BaseImage({ selectTag, setScale, setSize, containerSize 
     setSize: (arg: { width: number, height: number }) => void,
     containerSize: { width:number, height:number }
   }) {
-  
+  const {dirPath} = useAppContext()
   const {imageName} = useTagContext()
   const [imgBase64, setImgBase64] = useState<string>('');
 
@@ -21,13 +22,13 @@ export default function BaseImage({ selectTag, setScale, setSize, containerSize 
 
   useEffect(() => {
     async function getImageFromParams() {
-      const imgData = await loadImage(imageName)
+      const imgData = await loadImage(dirPath,imageName)
 
       if (imgData) setImgBase64(imgData);
     }
     
     getImageFromParams()
-  }, [imageName])
+  }, [dirPath, imageName])
   
   const [image] = useImage(imgBase64);
 
