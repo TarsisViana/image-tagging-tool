@@ -1,5 +1,4 @@
-import { Tag } from "@/context/TagToolContext";
-import { FileTag } from "@/types";
+import { FileTag, Tag } from "@/types";
 
 
 export function normalizeTag(rect: {
@@ -76,7 +75,7 @@ export function fileToCanvasTags(fileTags: FileTag[]) {
     }
   })
 
-  return canvasTags
+  return canvasTags ? canvasTags : []
 }
 
 

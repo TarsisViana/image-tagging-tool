@@ -31,7 +31,7 @@ export default function Canvas() {
   const recList = tagList.map((tag) => {
     let labelIndex, color = 'grey';
     if (tag.label) {
-      labelIndex = labelList.findIndex(label => label.name === tag.label)
+      labelIndex = labelList.findIndex(label => label === tag.label)
       if (labelIndex >= 0) {
         color = colorList[labelIndex]
       } 
@@ -118,14 +118,14 @@ export default function Canvas() {
     if (constructor
       && (constructor.width() > 20 || constructor.width() < -20)
       && (constructor.height() > 20 || constructor.height() < -20)) {
-      const rect = {
+      const rectangle = {
         x: constructor.x(),
         y: constructor.y(),
         width: constructor.width(),
         height: constructor.height(),
       };
       //handle negative values
-      const normalizedTag = normalizeTag(rect)
+      const normalizedTag = normalizeTag(rectangle)
       addTag(normalizedTag)
       selectTag(normalizedTag.id)
     }

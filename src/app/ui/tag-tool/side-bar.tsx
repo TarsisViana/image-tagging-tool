@@ -148,10 +148,10 @@ function LabelList() {
               key={index}
               variant={'outline-secondary'}
               onClick={handleClick}
-              id={label.name}
-              active={currentName === label.name}
+              id={label}
+              active={currentName === label}
             >
-              {label.name}
+              {label}
             </Button>
           )  
         })}

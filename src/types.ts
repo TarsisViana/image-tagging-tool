@@ -19,7 +19,7 @@ export interface FileTag {
 export interface Tag extends Omit<FileTag, 'label'> {
   value: string,
   label: string | null,
-  id?: string,
+  id: string,
 }
 
 export type Label = {

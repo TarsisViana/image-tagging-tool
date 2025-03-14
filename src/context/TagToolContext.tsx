@@ -1,12 +1,12 @@
 import { getRandomColors } from "@/app/lib/color"
-import { Rectangle, Tag , Label} from "@/types";
-import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
+import { Rectangle, Tag , ImageFileList} from "@/types";
+import { createContext, Dispatch, SetStateAction, useContext, useState } from "react"
 import { useAppContext } from "./AppContext";
 import { fileToCanvasTags } from "@/app/lib/tag";
 
 type TagToolContextProps = {
   tagList: Tag[],
-  labelList: Label[],
+  labelList: string[],
   selectedId: string | null,
   deleteTag: () => void,
   addTag: (tag: Tag) => void,
@@ -39,28 +39,23 @@ const TagToolContext = createContext<TagToolContextProps>({
 })
 
 
+
+
 export function TagToolProvider({ children, imageName }: { children: React.ReactNode, imageName: string }) { 
-  const { imageFileList, updateTagList } = useAppContext()
+  const { imageFileList, updateTagList, labelList, setLabels } = useAppContext()
   
-  const [tagList, setTagList] = useState<Tag[]>([]);
+  const [tagList, setTagList] = useState<Tag[]>(getImageTagList(imageFileList,imageName));
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [colorList, setColorList] = useState(getRandomColors());
-  const [labelList, setLabelList] = useState<Label[]>([
-    { name: 'small_dog', id: crypto.randomUUID() },
-    { name: 'big_dog', id: crypto.randomUUID() }])
   const [selectedId, selectTag] = useState<string | null>(null);
   const [edit, setEdit] = useState<boolean>(false)
   
-  useEffect(() => {
-    function getFileTags(imgName: string) {
-      const index = imageFileList.findIndex(file => file.imgName == imgName)
-      if (index > -1) return imageFileList[index].tags
-      else return []
-    };
-
-    const fileTags = getFileTags(imageName);
+  function getImageTagList(imageFileList: ImageFileList, imageName: string) {
+    const index = imageFileList.findIndex(file => file.imgName == imageName)
+    const fileTags = index >= 0 ? imageFileList[index].tags : []
     const canvasTags = fileToCanvasTags(fileTags)
-    setTagList(canvasTags)
-  },[])
+    return canvasTags
+  }
   
   function addTag( tag : Tag ) {
     const newArr = tagList.slice()
@@ -111,8 +106,8 @@ export function TagToolProvider({ children, imageName }: { children: React.React
 
   function addLabel(name:string) {
     const nameArr = labelList;
-    nameArr.push({name, id: crypto.randomUUID()});
-    setLabelList(nameArr);
+    nameArr.push(name);
+    setLabels(nameArr);
   }
 
   function editLabel(name: string) {
