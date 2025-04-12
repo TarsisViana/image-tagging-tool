@@ -1,16 +1,13 @@
 'use-client'
 
 import { createLabel } from "@/app/lib/actions";
-import { useAppContext } from "@/context/AppContext";
 import { useTagContext } from "@/context/TagToolContext";
-import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
 import { Form, Modal } from "react-bootstrap"
 import Button from 'react-bootstrap/Button'
+import FileList from "./file-list";
 
 export default function SideBar() {
-  const { imageFileList } = useAppContext()
-  
   const { tagList, selectedId, selectTag, deleteTag, edit, setEdit, editTagValue } = useTagContext()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -87,21 +84,9 @@ export default function SideBar() {
       >
         Delete Tag
       </Button>
-      <Button
-        variant="dark"
-        onClick={handleDownload}
-      >
-        Download
-      </Button>
       <div>
         <p>file list:</p>
-        <ul>
-          {imageFileList.map((image) => {
-            return <li key={image.imgName}>
-              <Link href={`${image.imgName}`}>{image.imgName}</Link>
-            </li>
-          })}
-        </ul>
+        <FileList/>
       </div>
     </>
   )
