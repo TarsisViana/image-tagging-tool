@@ -5,6 +5,8 @@ import { Dirent } from 'node:fs'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { canvasToFileTags } from './tag'
+import { redirect } from 'next/navigation'
+
 
 
 export async function loadImage(folderPath:string,imgName:string) {
@@ -17,6 +19,7 @@ export async function loadImage(folderPath:string,imgName:string) {
   } catch (err) {
     console.error(err);
   }
+  redirect('/')
 }
 
 export async function getImageList(path:string) {
@@ -39,7 +42,7 @@ export async function getImageList(path:string) {
 
   } catch (err) {
     console.log(err)
-    return JSON.stringify({success:false})
+    return JSON.stringify({ success: false })
   }
 }
 
