@@ -6,25 +6,30 @@ import { getFolderPath } from '../lib/actions'
 import { Button, InputGroup } from 'react-bootstrap'
 import { useAppContext } from '@/context/AppContext'
 
+
+
 export default function FolderPathForm() {
-  const { setImageList, setLabels, setPath } = useAppContext()
+  const { setImageList, setLabels, setPath, dirPath } = useAppContext()
   
-  const [value, setValue] = useState('/home/tarsis/Documents/test_imgs')
-  const [pathCheck, setPathCheck] = useState(false)
+  const [value, setValue] = useState(dirPath ? dirPath : process.env.NEXT_PUBLIC_DEFAULT_DIR)
+  const [pathCheck, setPathCheck] = useState(dirPath ? true : false)
 
   function handleSubmit() {
-    const res = getFolderPath(value)
-    res.then( data => {
-      const response = JSON.parse(data)
-      if (response.success) {
-        setPathCheck(true)
-        setImageList(response.imageList)
-        setLabels(response.labels)
-        setPath(value)
-      } else {
-        setPathCheck(false)
-      }
-    })
+    if (value) {
+      const res = getFolderPath(value)
+      res.then(data => {
+        const response = JSON.parse(data)
+        if (response.success) {
+          setPathCheck(true)
+          setImageList(response.imageList)
+          setLabels(response.labels)
+          setPath(value)
+        } else {
+          setPathCheck(false)
+        }
+      })
+    }
+    
   }
 
   return (

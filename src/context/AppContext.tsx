@@ -6,8 +6,8 @@ import { createContext, Dispatch, SetStateAction, useContext, useState } from "r
 
 
 type AppContextProps = {
-  dirPath:string,
-  setPath: Dispatch<SetStateAction<string>>,
+  dirPath:string | undefined,
+  setPath: Dispatch<SetStateAction<string | undefined>>,
   labelList: string[],
   setLabels: Dispatch<SetStateAction<string[]>>,
   imageFileList: ImageFileList,
@@ -30,7 +30,7 @@ const AppContext = createContext<AppContextProps>({
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [imageFileList, setImageList] = useState<ImageFileList>([])
   const [labelList, setLabels] = useState<string[]>([])
-  const [dirPath, setPath] = useState<string>('')
+  const [dirPath, setPath] = useState<string | undefined>()
 
   function getTagList(imgName: string) {
     const index = imageFileList.findIndex(file => file.imgName == imgName)
