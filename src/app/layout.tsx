@@ -28,7 +28,10 @@ export default function RootLayout({
   return (
     <AppProvider>
       <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable}`}
+          style={{height:"100vh", display:"flex", alignItems:"center"}}
+        >
           {children}
           <BootstrapClient/>
         </body>

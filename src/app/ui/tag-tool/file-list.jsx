@@ -7,7 +7,10 @@ export default function FileList() {
   const { imageFileList } = useAppContext()
   const {imageName} = useTagContext()
   return (
-    <ListGroup className="overflow-auto" style={{maxHeight:"300px"}}>
+    <ListGroup
+      className="overflow-auto text-start"
+      style={{ maxHeight: "350px", minWidth: "200px" }}
+    >
       {imageFileList.map(image => {
         return (
           <ListGroup.Item

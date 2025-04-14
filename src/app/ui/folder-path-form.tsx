@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Form from 'react-bootstrap/Form'
 import { getFolderPath } from '../lib/actions'
-import { Button } from 'react-bootstrap'
+import { Button, InputGroup } from 'react-bootstrap'
 import { useAppContext } from '@/context/AppContext'
 
 export default function FolderPathForm() {
@@ -29,20 +29,37 @@ export default function FolderPathForm() {
 
   return (
     <Form noValidate>
-      <Form.Group className='mb-3' controlId='folderInput'>
-        <Form.Label>Folder path:</Form.Label>
-        <Form.Control
-          value={value}
-          type='text'
-          name='file'
-          onChange={(e) => setValue(e.target.value)}
-          isValid={pathCheck}
-          isInvalid={!pathCheck}
-        />
-        <Form.Control.Feedback type='valid'>Looks good!</Form.Control.Feedback>
-        <Form.Control.Feedback type='invalid'>Folder not found!</Form.Control.Feedback>
+      <Form.Group className='mb-5 m-5' controlId='folderInput'> 
+        <InputGroup>
+          <InputGroup.Text>Folder path:</InputGroup.Text>
+          <Form.Control
+            value={value}
+            type='text'
+            name='file'
+            onChange={(e) => setValue(e.target.value)}
+            isValid={pathCheck}
+            isInvalid={!pathCheck}
+          />
+          
+          <Form.Control.Feedback
+            className='position-absolute top-100'
+            type='valid'
+          >Looks good!
+          </Form.Control.Feedback>
+          <Form.Control.Feedback
+            type='invalid'
+            className='position-absolute top-100'
+          >Folder not found!
+          </Form.Control.Feedback>
+          <Button
+            type='button'
+            variant='light'
+            className='border'
+            style={{marginLeft:".1px"}}
+            onClick={handleSubmit}>Save</Button>
+        </InputGroup>
       </Form.Group>
-      <Button type='button' onClick={handleSubmit}>save</Button>
+      
     </Form>
   )
 }
