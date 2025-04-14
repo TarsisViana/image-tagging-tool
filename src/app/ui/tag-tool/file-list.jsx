@@ -9,7 +9,7 @@ export default function FileList() {
   return (
     <ListGroup
       className="overflow-auto text-start"
-      style={{ maxHeight: "350px", minWidth: "200px" }}
+      style={{  minWidth: "200px" }}
     >
       {imageFileList.map(image => {
         return (
@@ -19,6 +19,7 @@ export default function FileList() {
             key={image.imgName}
             as={Link}
             active={imageName == image.imgName}
+            className="py-1"
           >
             {image.imgName}
           </ListGroup.Item>

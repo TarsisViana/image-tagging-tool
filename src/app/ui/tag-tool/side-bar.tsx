@@ -60,7 +60,9 @@ export default function SideBar() {
           setEdit(!edit)
           if(edit) selectTag(null)
         }}
-      >edit</Button>
+      >
+        {edit? 'Create' : 'Edit'}
+      </Button>
       <div className="d-flex flex-column m-1">
         <Form onSubmit={ e => e.preventDefault()}>
           <Form.Group className="" controlId="tagValueForm">
@@ -81,11 +83,14 @@ export default function SideBar() {
       <Button
         variant="danger"
         onClick={deleteTag}
+        size="sm"
+        className="mx-1"
       >
         Delete Tag
       </Button>
-      <div>
-        <p>file list:</p>
+      <hr />
+      <p>File list:</p>
+      <div className="overflow-y-auto">
         <FileList/>
       </div>
     </>
@@ -126,7 +131,7 @@ function LabelList() {
   
   return (
     <>
-      <div className="d-grid gap-2 m-3"> 
+      <div className="d-grid gap-1 m-3"> 
         {labelList.map((label, index) => {
           return ( 
             <Button
@@ -135,6 +140,7 @@ function LabelList() {
               onClick={handleClick}
               id={label}
               active={currentName === label}
+              size="sm"
             >
               {label}
             </Button>
@@ -145,7 +151,9 @@ function LabelList() {
       <Button
         variant="primary"
         onClick={handleShow}
-      >New Label
+        size="sm"
+      >
+        New Label
       </Button>
       <Dialog show={modalShow} setShow={setModalShow} />
       
