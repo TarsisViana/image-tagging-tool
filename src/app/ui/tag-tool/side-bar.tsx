@@ -2,18 +2,21 @@
 
 import { createLabel } from "@/app/lib/actions";
 import { useTagContext } from "@/context/TagToolContext";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
+import { Dispatch, KeyboardEvent, SetStateAction, useEffect, useRef, useState } from "react"
 import { Form, Modal } from "react-bootstrap"
 import Button from 'react-bootstrap/Button'
 import FileList from "./file-list";
+import useKeyPress from "./useKeyPress";
 
 export default function SideBar() {
   const { tagList, selectedId, selectTag, deleteTag, edit, setEdit, editTagValue } = useTagContext()
   const inputRef = useRef<HTMLInputElement>(null)
-
+  const inputDiv = useRef<HTMLDivElement>(null)
   const [inputValue, setValue] = useState('')
 
-  
+  //set keyboard shortcuts
+  const shortcutKeys = ['w', 'Delete']
+  useKeyPress(shortcutKeys, keybordShortcutHandler)  
 
   useEffect(() => {
     const input = inputRef.current;
@@ -37,6 +40,16 @@ export default function SideBar() {
     editTagValue(e.target.value)
   }
 
+  function keybordShortcutHandler(event: KeyboardEvent) {
+    console.log(event)
+    if (event.key == "Delete") {
+      deleteTag()
+    } else if (event.key == "w" && event.altKey) {
+      setEdit(!edit)
+      if (edit) selectTag(null)
+    } 
+  }
+
   function handleDownload() {
     const jsonString = JSON.stringify(tagList)
     const blob = new Blob([jsonString], { type: 'text/json' })
@@ -52,8 +65,12 @@ export default function SideBar() {
     a.dispatchEvent(clickEvt)
     a.remove()
   }
+
   return (
-    <>
+    <div
+      className='col-3 d-flex flex-column gap-1 h-100 w-100'
+      ref= {inputDiv}
+    >
       <Button
         variant={edit ? 'success' : 'danger'}
         onClick={() => {
@@ -85,6 +102,7 @@ export default function SideBar() {
         onClick={deleteTag}
         size="sm"
         className="mx-1"
+        onKeyDown={keybordShortcutHandler}
       >
         Delete Tag
       </Button>
@@ -93,7 +111,7 @@ export default function SideBar() {
       <div className="overflow-y-auto">
         <FileList/>
       </div>
-    </>
+    </div>
   )
 }
 

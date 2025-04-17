@@ -14,7 +14,7 @@ import { Rectangle } from '@/types';
 
 
 export default function Canvas() {
-  const { tagList, addTag, selectedId, selectTag, deleteTag, editTag, edit, labelList, colorList } = useTagContext()
+  const { tagList, addTag, selectedId, selectTag, editTag, edit, labelList, colorList } = useTagContext()
   const [isDrawing, setDrawing] = useState(false);
   
   
@@ -46,18 +46,6 @@ export default function Canvas() {
       id: tag.id,
     };
     return rect;
-  })
-
-  useEffect(() => {
-    function onDeleteKey(e: KeyboardEvent) {
-      if (e.key === "Delete") {
-        deleteTag();
-      }
-    } 
-    window.addEventListener('keydown', onDeleteKey)
-
-    return () => {
-      window.removeEventListener('keydown',onDeleteKey)    }
   })
 
   //check the parent size

@@ -93,11 +93,11 @@ function extractGenLabel(individualLabel:string) {
   return label
 }
 
-export async function saveTagsToFolder(tags:Tag[], folderPath:string, imgName:string) {
+export async function saveTagsToFolder(tags:Tag[], folderPath:string | undefined, imgName:string) {
   const fileName = `${path.parse(imgName).name}.json`
   const value = JSON.stringify(canvasToFileTags(tags))
-  console.log(`${folderPath}/${fileName}`)
   try {
+    if(!folderPath) throw Error('Folder path is undefined')
     fs.writeFile(`${folderPath}/${fileName}`,value, {encoding:'utf8'})
   } catch (err) {
     console.log(err)

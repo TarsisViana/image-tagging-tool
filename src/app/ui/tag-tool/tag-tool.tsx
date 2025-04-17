@@ -10,7 +10,7 @@ export default function TagTool({ id }: { id: string }) {
     <div className="container-fluid d-flex p-0">
       <TagToolProvider imageName={id}>
         <Canvas/>
-        <div style={{ maxWidth: '300px'}} className='col-3 d-flex flex-column gap-1 h-100'>
+        <div style={{ maxWidth: '300px'}} className='col-3 h-100'>
           <SideBar/>
         </div>
       </TagToolProvider>
