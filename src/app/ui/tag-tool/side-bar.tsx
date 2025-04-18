@@ -41,29 +41,12 @@ export default function SideBar() {
   }
 
   function keybordShortcutHandler(event: KeyboardEvent) {
-    console.log(event)
     if (event.key == "Delete") {
       deleteTag()
     } else if (event.key == "w" && event.altKey) {
       setEdit(!edit)
       if (edit) selectTag(null)
     } 
-  }
-
-  function handleDownload() {
-    const jsonString = JSON.stringify(tagList)
-    const blob = new Blob([jsonString], { type: 'text/json' })
-    
-    const a = document.createElement('a')
-    a.download = 'test.json'
-    a.href = window.URL.createObjectURL(blob)
-    const clickEvt = new MouseEvent('click', {
-      view: window,
-      bubbles: true,
-      cancelable: true,
-    })
-    a.dispatchEvent(clickEvt)
-    a.remove()
   }
 
   return (
@@ -145,6 +128,31 @@ function LabelList() {
       setCurrentName(button.id)
     }
     
+  }
+
+  //shortcuts
+  const keys : string[] = [];
+  useEffect(() => {
+    //limit to 10 label shortcuts
+    for (let i = 1; i <= labelList.length && i <= 10; i++){
+      if (i = 10) {
+        keys.push(`${0}`)
+      } else {
+        keys.push(`${i}`)
+      }
+    }
+  })
+
+  useKeyPress(keys, shortcutHandler)
+
+  function shortcutHandler(event:KeyboardEvent) {
+    if (selectedId && event.altKey) {
+      // the 0 key is the 10th label
+      const index = parseInt(event.key) == 0 ? 9 : parseInt(event.key)-1
+      const label = labelList[index]
+      editLabel(label)
+      setCurrentName(label)
+    }
   }
   
   return (
