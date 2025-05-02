@@ -61,7 +61,7 @@ export function normalizeTag(rect: {
 
 export function fileToCanvasTags(fileTags: FileTag[]) {
   const canvasTags = fileTags.map(tag => {
-    const index = tag.label.lastIndexOf('.');
+    const index = tag.label.lastIndexOf('¿');
     const label = tag.label.slice(index + 1)
     const value = tag.label.slice(0, index)
     return {
@@ -81,7 +81,7 @@ export function fileToCanvasTags(fileTags: FileTag[]) {
 
 export function canvasToFileTags(canvasTags: Tag[]) {
   const fileTags = canvasTags.map(tag => {
-    const label = `${tag.value}.${tag.label}`
+    const label = `${tag.value}¿${tag.label}`
     return {
       xMin: tag.xMin,
       yMin: tag.yMin,

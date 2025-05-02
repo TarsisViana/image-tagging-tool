@@ -36,7 +36,6 @@ export default function SideBar() {
   
   function handleChange(e:React.ChangeEvent<HTMLInputElement>) {
     setValue(e.target.value);
-    //make function to change value
     editTagValue(e.target.value)
   }
 
@@ -54,15 +53,18 @@ export default function SideBar() {
       className='col-3 d-flex flex-column gap-1 h-100 w-100'
       ref= {inputDiv}
     >
-      <Button
-        variant={edit ? 'success' : 'danger'}
-        onClick={() => {
-          setEdit(!edit)
-          if(edit) selectTag(null)
-        }}
-      >
-        {edit? 'Create' : 'Edit'}
-      </Button>
+      <div className="d-flex px-2 align-items-center">
+        <h4 className="flex-grow-1 m-0">{`${edit ? 'Edit' : 'Create'} mode`}</h4>
+        <Button
+          variant={edit ? 'success' : 'danger'}
+          onClick={() => {
+            setEdit(!edit)
+            if(edit) selectTag(null)
+          }}
+        >
+          {edit? 'Create' : 'Edit'}
+        </Button>
+      </div>
       <div className="d-flex flex-column m-1">
         <Form onSubmit={ e => e.preventDefault()}>
           <Form.Group className="" controlId="tagValueForm">
@@ -104,6 +106,8 @@ function LabelList() {
   
   const [modalShow, setModalShow] = useState(false);
   const [currentName, setCurrentName] = useState<string | null>(null);
+
+  const [keys, setKeys] = useState<string[]>([])
   
 
   useEffect(() => {
@@ -131,21 +135,16 @@ function LabelList() {
   }
 
   //shortcuts
-  const keys : string[] = [];
   useEffect(() => {
     //limit to 10 label shortcuts
-    for (let i = 1; i <= labelList.length && i <= 10; i++){
-      if (i = 10) {
-        keys.push(`${0}`)
-      } else {
-        keys.push(`${i}`)
-      }
-    }
-  })
-
+    const size = labelList.length
+    const arr = Array.from({length:size <= 10 ? size : 10}, (e,i) => `${i+1}`)
+    setKeys(arr)
+  }, [labelList])
+  
   useKeyPress(keys, shortcutHandler)
 
-  function shortcutHandler(event:KeyboardEvent) {
+  function shortcutHandler(event: React.KeyboardEvent) {
     if (selectedId && event.altKey) {
       // the 0 key is the 10th label
       const index = parseInt(event.key) == 0 ? 9 : parseInt(event.key)-1

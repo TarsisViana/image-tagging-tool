@@ -11,8 +11,8 @@ export default function useKeyPress( keys:keys, callback:eventHandler, node:node
     callbackRef.current = callback;
   })
 
-  const handleKeyPress = useCallback((event: Event) => {
-    const e = event as unknown as KeyboardEvent
+  const handleKeyPress = useCallback((event: React.KeyboardEvent | Event) => {
+    const e = event as React.KeyboardEvent
       if (keys.some((key:string) => e.key === key)) {
         callbackRef.current(e);
       }

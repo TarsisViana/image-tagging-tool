@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ListGroup } from "react-bootstrap"
 import useKeyPress from "./useKeyPress"
 import { useRouter } from "next/navigation"
+import React from "react"
 
 export default function FileList() {
   const { imageFileList } = useAppContext()
@@ -14,7 +15,7 @@ export default function FileList() {
   const shortcutKeys = ['a', 's']
   useKeyPress(shortcutKeys, keyPressHandler)  
 
-  function keyPressHandler(event) {
+  function keyPressHandler(event: React.KeyboardEvent) {
     //only in the dashboad
     if (imageName !== '') { 
       const index = imageFileList.findIndex((imageFile) => imageFile.imgName == imageName)

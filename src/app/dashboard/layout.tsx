@@ -20,7 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       >
         {children}
       </div>
-      <footer className="navbar justify-content-center border">Tarsis Viana</footer>
+      <footer className="navbar justify-content-center border">Made by Tarsis Viana</footer>
     </div>
   );
 }

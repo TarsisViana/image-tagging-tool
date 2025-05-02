@@ -55,7 +55,6 @@ export function TagToolProvider({ children, imageName }: { children: React.React
     return () => {
       (async () => {
         await saveTagsToFolder(tagList, dirPath, imageName);
-        console.log("saved!")
       })()
     }
   },[])
