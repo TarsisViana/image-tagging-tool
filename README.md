@@ -21,13 +21,6 @@ Exemple:
 }]
 ```
 
-## 💡 Features
-
-- **User Authentication**: Register, login,  and manage sessions.
-- **User Information handler**: Update user informations.
-- **Advertisement Management**: Create, update, delete, and view advertisements.
-- **Database Integration**: Built using Prisma ORM for database management.
-
 ## 🔨 Tools
 
 - **Node.js**: JavaScript runtime for server-side logic.
@@ -65,4 +58,4 @@ Exemple:
     bun dev
     ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser.
