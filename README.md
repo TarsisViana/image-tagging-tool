@@ -1,61 +1,65 @@
-<p>&nbsp;</p>
-<h1 align="center">Offline Image Tagging app</h1>
-<p>&nbsp;</p>
+# Offline Image Tagging App
 
-## 📖 Description
+## 🖼️ Overview
 
-Offline tagging app built with Next.js, Typescript, Node.js, Konva.js and Bootstrap. The app reads and writes to files on your local machine.
+This is an offline image annotation tool built with **Next.js**, **TypeScript**, **Node.js**, **Konva.js**, and **Bootstrap**. It allows users to draw bounding boxes on images and save the annotations locally in JSON format for later use in machine learning or data analysis workflows.
 
-The tags are saved in a array on a .json file with the same name as the image the tags are from.
+## ✨ Features
 
-The label is joined from the 2 parts: a label common to multiple files and a uniqueValue.
+- 🖍️ Intuitive drawing of bounding boxes over images
+- 💾 Annotations saved as `.json` files with matching image names
+- 🔒 Fully offline – no internet connection required
+- 🧠 Labels include both a unique identifier and a category using the format: `uniqueValue¿label`
 
-Exemple:
-```js
-[{
-    "xMin":225,
-    "yMin":124,
-    "xMax":405,
-    "yMax":304,
-    "label":"uniqueValue¿label",
-}]
-```
+## 🛠️ Technologies Used
 
-## 🔨 Tools
+- [Next.js](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Node.js](https://nodejs.org/)
+- [Konva.js](https://konvajs.org/)
+- [Bootstrap](https://getbootstrap.com/)
 
-- **Node.js**: JavaScript runtime for server-side logic.
-- **NextJs**: Framework for building the App.
-- **KonvaJs**: Library for the canvas interactivity.
-- **Bootstrap**: Frontend Toolkit for styling.
+## 🚀 Getting Started
 
-## ⚙️ Setup
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) installed
 
 ### Installation
 
-- **Clone the repository:**
+```bash
+# Clone the repository
+git clone https://github.com/TarsisViana/image-tagging-tool.git
+cd image-tagging-tool
 
-   ```bash
-   git clone https://github.com/Jaoovit/marketplace-api.git
-   
-   cd marketplace-api
-1. Update the name of the .env_template to .env
+# Install dependencies
+npm install
 
-2. Define .env variable:
+# Run the development server
+npm run dev
+```
+Then open [http://localhost:3000](http://localhost:3000) in your browser to start using the tool.
 
-    - Folder path you want to work on NEXT_PUBLIC_DEFAULT_DIR=
+## 📂 Usage
 
-## 🏃‍➡️ Start
+1. Add your images to the appropriate directory (e.g., `public/images`).
+2. Open the app in your browser.
+3. Select the image you want to annotate.
+4. Draw bounding boxes on the image canvas.
+5. Enter a `uniqueValue` and a `label` for each bounding box.
+6. Click save — a `.json` file will be generated containing all annotations for that image.
 
-- **Run commands:**
+### 🧾 Annotation Format
 
-   ```bash
-    npm run dev
-    # or
-    yarn dev
-    # or
-    pnpm dev
-    # or
-    bun dev
-    ```
+Each annotation is saved in a JSON array with the following structure:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser.
+```json
+[
+  {
+    "xMin": 225,
+    "yMin": 124,
+    "xMax": 405,
+    "yMax": 304,
+    "label": "uniqueValue¿label"
+  }
+]
